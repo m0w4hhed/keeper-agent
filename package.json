@@ -1,8 +1,8 @@
 {
-  "name": "NabiilahScan",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "name": "nabiilah.scan",
+  "version": "1.0.0",
+  "author": "NabiilahStore",
+  "homepage": "https://nabiilahstore.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

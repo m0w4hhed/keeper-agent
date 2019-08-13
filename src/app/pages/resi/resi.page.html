@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="tertiary" mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <strong>NABIILAH</strong>STORE
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+ 
+<ion-content no-padding>
+
+<ion-card>
+  <ion-item-divider color="tertiary">
+    <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
+    <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
+  </ion-item-divider>
+</ion-card>
+
+<div *ngIf="closingData | async; let closingan">
+  <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
+    <ion-item-divider color="tertiary">
+      <ion-icon slot="start" name="cube"></ion-icon>
+      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span></ion-label>
+      <ion-label slot="end"><span class="eksp">{{ items.value.length }} Paket</span></ion-label>
+    </ion-item-divider>
+    <div *ngFor="let item of items.value">
+      <ion-item (click)="item.switch=!item.switch" [color]="item.status!='Resi' ? 'warning' : 'light'">
+        <ion-label>
+          <ion-note *ngIf="!item.resi">{{ item.id }}</ion-note>
+          <ion-note *ngIf="item.resi">{{ item.resi }}</ion-note>
+          <ion-card-title>
+          {{ item.penerima }} 
+          </ion-card-title>
+        </ion-label>
+        <ion-note slot="end">
+          <ion-label color="tertiary">{{ item.status }}</ion-label>
+          <ion-label>{{ item.listBarang.length }}pcs </ion-label>
+        </ion-note>
+      </ion-item>
+      <div *ngIf="item.switch">
+        <ion-item color="light">
+          <ion-label position="floating">Nomor Resi:</ion-label>
+          <ion-input [(ngModel)]="scannedData"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-button expand="block" color="tertiary" (click)="scan()"><ion-icon slot="icon-only" name="barcode"></ion-icon> SCAN BARCODE</ion-button>
+          <ion-button expand="block" color="tertiary" (click)="updateResi(item.id)" slot="end">INPUT</ion-button>
+        </ion-item>
+      </div>
+    </div>
+  </ion-card>
+</div>
+
+<!--
+  <h1>Enter Value to Create QR code</h1>
+  <ion-input type="text" [(ngModel)]="encodedData"></ion-input>
+ 
+  <ion-button (click)="encodedText()">
+    Create QR
+  </ion-button>
+-->
+</ion-content>

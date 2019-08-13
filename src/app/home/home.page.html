@@ -1,14 +1,19 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+  <div class="vertical-center">
+    <ion-card class="center" routerLink="/scan">
+    <img src="../../assets/qr-code.svg" />
+    <ion-card-header>
+      <ion-card-subtitle>Scan Barang Keluar</ion-card-subtitle>
+      <ion-card-title><strong>KIRIM</strong></ion-card-title>
+    </ion-card-header>
+  </ion-card>
+  <br>
+  <ion-card class="center"  routerLink="/resi">
+    <img src="../../assets/invoice.svg" />
+    <ion-card-header>
+      <ion-card-subtitle>Cari dan Masukkan Resi</ion-card-subtitle>
+      <ion-card-title><strong>INPUT RESI</strong></ion-card-title>
+    </ion-card-header>
+  </ion-card>
   </div>
 </ion-content>
