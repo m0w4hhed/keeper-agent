@@ -42,17 +42,21 @@ export class ScanPage {
         disableSuccessBeep: false // iOS and Android
       }
     ).then(barcodeData => {
-      const now = moment().toDate().getTime();
-      this.dataService.updateData(barcodeData.text, {
-        status: 'Dikirim',
-        wktDikirim: now,
-        tglDikirim: this.dataService.getTime('YYYYMMDD')
-      });
-      this.popupService.showToast('Barang Dikirim!');
+      if (barcodeData.text && barcodeData.text.length === 16) {
+        const now = moment().toDate().getTime();
+        this.dataService.updateData(barcodeData.text, {
+          status: 'Dikirim',
+          tglDikirim: this.dataService.getTime('YYYYMMDD'),
+          wktDikirim: now
+        });
+        this.popupService.showToast('Dikirim', 1000);
+      } else {
+        this.popupService.showToast('Barcode salah bro!', 3000);
+      }
     })
     .catch(err => {
       console.log('Error', err);
-      this.popupService.showToast('Error: ' + err);
+      this.popupService.showToast('Error: ' + err, 3000);
     });
   }
 

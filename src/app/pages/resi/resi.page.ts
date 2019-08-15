@@ -35,19 +35,16 @@ export class ResiPage {
       const tgl = moment(this.now).format('YYYYMMDD');
       this.closingData = this.dataService.getDatas(tgl);
     } else {
-      this.popupService.showToast('Pilih Tanggal Dulu');
+      this.popupService.showToast('Pilih Tanggal Dulu', 2000);
     }
   }
 
   updateResi(iid: string) {
-    const now = moment().toDate().getTime();
     if (this.scannedData) {
       this.dataService.updateData(iid, {
-        status: 'Resi',
-        wktResi: now,
         resi: this.scannedData
       });
-      this.popupService.showToast('Resi Diupdate!');
+      this.popupService.showToast('Resi Diupdate!', 2000);
       this.scannedData = '';
     }
   }
@@ -69,7 +66,7 @@ export class ResiPage {
     })
     .catch(err => {
       console.log('Error', err);
-      this.popupService.showToast('Error: ' + err);
+      this.popupService.showToast('Error: ' + err, 3000);
     });
   }
 

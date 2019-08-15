@@ -11,13 +11,6 @@
  
 <ion-content no-padding>
 
-<ion-card>
-  <ion-item-divider color="tertiary">
-    <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
-    <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
-  </ion-item-divider>
-</ion-card>
-
 <div *ngIf="closingData | async; let closingan">
   <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
     <ion-item-divider color="tertiary">
@@ -26,10 +19,10 @@
       <ion-label slot="end"><span class="eksp">{{ items.value.length }} Paket</span></ion-label>
     </ion-item-divider>
     <div *ngFor="let item of items.value">
-      <ion-item (click)="item.switch=!item.switch" [color]="item.status!='Resi' ? 'warning' : 'light'">
+      <ion-item (click)="item.switch=!item.switch" [color]="!item.resi ? 'warning' : 'light'">
         <ion-label>
           <ion-note *ngIf="!item.resi">{{ item.id }}</ion-note>
-          <ion-note *ngIf="item.resi">{{ item.resi }}</ion-note>
+          <ion-note *ngIf="item.resi">RESI: {{ item.resi }}</ion-note>
           <ion-card-title>
           {{ item.penerima }} 
           </ion-card-title>
@@ -62,3 +55,14 @@
   </ion-button>
 -->
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+      <ion-card>
+          <ion-item-divider color="tertiary">
+            <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
+            <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
+          </ion-item-divider>
+      </ion-card>
+  </ion-toolbar>
+</ion-footer>

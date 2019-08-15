@@ -11,10 +11,10 @@ export class PopupService {
     private alertController: AlertController
     ) {}
 
-  async showToast(message: any) {
+  async showToast(message: any, dur) {
     const toast = await this.toastController.create({
         message,
-        duration: 3000
+        duration: dur
     });
     await toast.present();
   }
