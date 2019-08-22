@@ -17,6 +17,9 @@ export class ResiPage {
   encodedData: any;
   scannedData: string;
 
+  salahOngkir = false;
+  realOngkir = 0;
+
   now;
 
   task;
@@ -39,13 +42,23 @@ export class ResiPage {
     }
   }
 
-  updateResi(iid: string) {
+  updateResi(item) {
     if (this.scannedData) {
-      this.dataService.updateData(iid, {
-        resi: this.scannedData
-      });
+      if (!this.salahOngkir) {
+        this.dataService.updateData(item.id, {
+          resi: this.scannedData,
+          realOngkir: item.ongkir
+        });
+      } else {
+        this.dataService.updateData(item.id, {
+          resi: this.scannedData,
+          realOngkir: this.realOngkir
+        });
+      }
       this.popupService.showToast('Resi Diupdate!', 2000);
       this.scannedData = '';
+      this.realOngkir = 0;
+      this.salahOngkir = false;
     }
   }
 
