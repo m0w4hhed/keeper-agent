@@ -15,17 +15,17 @@
   <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
     <ion-item-divider color="tertiary">
       <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Rp.{{ items.value | pluck: 'ongkir' | sum | number }} | Real: {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
-      <ion-label slot="end"><span class="note">{{ items.value.length }} Paket</span></ion-label>
+      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ items.value | pluck: 'ongkir' | sum | number }} <br> Real:  {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
+      <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</span></ion-label>
     </ion-item-divider>
     <div *ngFor="let item of items.value">
       <ion-item (click)="item.switch=!item.switch" [color]="!item.resi ? 'warning' : 'light'">
         <ion-label>
-          <ion-note *ngIf="!item.resi">{{ item.id }} | <span>{{ item.ongkir | number }}</span></ion-note>
-          <ion-note *ngIf="item.resi">RESI: {{ item.resi }}</ion-note>
+          <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.ongkir | number }}</span></ion-note>
           <ion-card-title>
-          {{ item.penerima }} 
+          <strong>{{ item.penerima }}</strong>
           </ion-card-title>
+          <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong> | {{ item.realOngkir | number }}</ion-note>
         </ion-label>
         <ion-note slot="end">
           <ion-label color="tertiary">{{ item.status }}</ion-label>
@@ -39,7 +39,7 @@
         </ion-item>
         <ion-item color="light" *ngIf="salahOngkir">
           <ion-label position="floating">Real Ongkir:</ion-label>
-          <ion-input [(ngModel)]="realOngkir"></ion-input>
+          <ion-input [(ngModel)]="realOngkir" type="number"></ion-input>
         </ion-item>
         <ion-item>
           <ion-button expand="block" color="tertiary" (click)="scan()"><ion-icon slot="icon-only" name="barcode"></ion-icon> SCAN BARCODE</ion-button>
