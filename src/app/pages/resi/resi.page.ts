@@ -18,7 +18,7 @@ export class ResiPage {
   scannedData: string;
 
   salahOngkir = false;
-  realOngkir = 0;
+  realOngkir;
 
   now;
 
@@ -47,19 +47,25 @@ export class ResiPage {
       if (!this.salahOngkir) {
         this.dataService.updateData(item.id, {
           resi: this.scannedData,
-          realOngkir: item.ongkir
+          realOngkir: Number(item.ongkir)
         });
+        this.reset();
       } else {
+        const real = this.realOngkir.toString().trim().replace(/[^0-9]/g, '');
         this.dataService.updateData(item.id, {
           resi: this.scannedData,
-          realOngkir: this.realOngkir
+          realOngkir: Number(real)
         });
+        this.reset();
       }
+    }
+  }
+
+  reset() {
       this.popupService.showToast('Resi Diupdate!', 2000);
       this.scannedData = '';
-      this.realOngkir = 0;
+      this.realOngkir = '';
       this.salahOngkir = false;
-    }
   }
 
   scan() {

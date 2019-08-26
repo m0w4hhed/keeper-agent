@@ -23,7 +23,7 @@
         <ion-label>
           <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.ongkir | number }}</span></ion-note>
           <ion-card-title>
-          <strong>{{ item.penerima }}</strong>
+          <strong>{{ item.cs }} - {{ item.penerima }}</strong>
           </ion-card-title>
           <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong> | {{ item.realOngkir | number }}</ion-note>
         </ion-label>
