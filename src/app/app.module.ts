@@ -17,6 +17,8 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { UpdateResiPageModule } from 'src/app/pages/update-resi/update-resi.module';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -28,6 +30,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     BrowserAnimationsModule,
+    UpdateResiPageModule,
   ],
   providers: [
     StatusBar,

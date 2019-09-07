@@ -8,7 +8,6 @@ import { NgPipesModule } from 'ngx-pipes';
 import { IonicModule } from '@ionic/angular';
 import { MaterialModule } from '../../modules/material.module';
 
-import { UpdateResiPage } from '../update-resi/update-resi.page';
 import { ResiPage } from './resi.page';
 
 const routes: Routes = [
@@ -28,11 +27,7 @@ const routes: Routes = [
     MaterialModule,
   ],
   declarations: [
-    UpdateResiPage,
     ResiPage,
-  ],
-  entryComponents: [
-    UpdateResiPage,
   ]
 })
 export class ResiPageModule {}
