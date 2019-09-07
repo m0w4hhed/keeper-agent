@@ -6,6 +6,10 @@ import { DataService } from '../../services/data.service';
 import { PopupService } from '../../services/popup.service';
 
 import * as moment from 'moment';
+import { ScannerService } from 'src/app/services/scanner.service';
+import { ModalController } from '@ionic/angular';
+
+import { UpdateResiPage } from 'src/app/pages/update-resi/update-resi.page';
 
 @Component({
   selector: 'app-resi',
@@ -27,8 +31,10 @@ export class ResiPage {
 
   constructor(
     private barcodeScanner: BarcodeScanner,
+    private scanner: ScannerService,
     private dataService: DataService,
-    private popupService: PopupService
+    private popupService: PopupService,
+    private modal: ModalController,
     ) {
     // this.encodedData = 'https://www.FreakyJolly.com';
   }
@@ -40,6 +46,16 @@ export class ResiPage {
     } else {
       this.popupService.showToast('Pilih Tanggal Dulu', 2000);
     }
+  }
+
+  async detailPaket(paket) {
+    const modal = await this.modal.create({
+      component: UpdateResiPage,
+      componentProps: {
+        data: paket
+      }
+    });
+    return await modal.present();
   }
 
   updateResi(item) {
@@ -69,18 +85,7 @@ export class ResiPage {
   }
 
   scan() {
-    this.barcodeScanner.scan(
-      {
-        preferFrontCamera : false, // iOS and Android
-        showFlipCameraButton : true, // iOS and Android
-        showTorchButton : true, // iOS and Android
-        torchOn: false, // Android, launch with the torch switched on (if available)
-        prompt : 'Scan barcode barang keluarnya bos', // Android
-        resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-        disableAnimations : true, // iOS
-        disableSuccessBeep: false // iOS and Android
-      }
-    ).then(barcodeData => {
+    this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
       this.scannedData = barcodeData.text;
     })
     .catch(err => {

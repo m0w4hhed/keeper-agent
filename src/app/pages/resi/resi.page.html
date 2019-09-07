@@ -15,23 +15,27 @@
   <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
     <ion-item-divider color="tertiary">
       <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ items.value | pluck: 'ongkir' | sum | number }} <br> Real:  {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
+      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ items.value | pluck: 'totalOngkir' | sum | number }} <br> Real:  {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
       <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</span></ion-label>
     </ion-item-divider>
-    <div *ngFor="let item of items.value">
-      <ion-item (click)="item.switch=!item.switch" [color]="!item.resi ? 'warning' : 'light'">
+    <ion-item-sliding *ngFor="let item of items.value">
+      <ion-item [color]="!item.resi ? 'warning' : 'light'" (click)="detailPaket(item)">
         <ion-label>
-          <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.ongkir | number }}</span></ion-note>
+          <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.totalOngkir | number }} ({{ item.berat }}Kg)</span></ion-note>
           <ion-card-title>
           <strong>{{ item.cs }} - {{ item.penerima }}</strong>
           </ion-card-title>
-          <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong> | {{ item.realOngkir | number }}</ion-note>
+          <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong><span *ngIf="item.realOngkir && (item.realOngkir!==item.totalOngkir || item.realBerat!==item.berat)" style="color: red"> | {{ item.realOngkir | number }} ({{ item.realBerat }}Kg)</span></ion-note>
         </ion-label>
         <ion-note slot="end">
           <ion-label color="tertiary">{{ item.status }}</ion-label>
           <ion-label>{{ item.listBarang.length }}pcs </ion-label>
         </ion-note>
       </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="tertiary" (click)="detailPaket(item)">EDIT</ion-item-option>
+      </ion-item-options>
+      <!--
       <div *ngIf="item.switch">
         <ion-item color="light">
           <ion-label position="floating">Nomor Resi:</ion-label>
@@ -47,7 +51,8 @@
           <ion-button expand="block" color="tertiary" (click)="updateResi(item)" slot="end">INPUT</ion-button>
         </ion-item>
       </div>
-    </div>
+      -->
+    </ion-item-sliding>
   </ion-card>
 </div>
 

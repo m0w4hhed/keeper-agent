@@ -64,7 +64,9 @@ export class DataService {
               const data = a.payload.doc.data();
               const id = a.payload.doc.id;
               const date = moment.unix(parseInt(id.split('-')[0], 10) / 1000).format('YYYY-MM-DD');
-              return { id, date, ...data };
+              // tslint:disable-next-line: no-string-literal
+              const totalOngkir = a.payload.doc.data()['ongkir'] * a.payload.doc.data()['berat'];
+              return { id, date, totalOngkir, ...data };
             });
           })
         )
@@ -74,6 +76,7 @@ export class DataService {
   }
 
   updateData(id: string, data) {
+    console.log(id + '--' + data);
     this.db.collection('closing').doc(id).update(data);
   }
 }

@@ -3,18 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
+import { IonicModule } from '@ionic/angular';
 import { NgPipesModule } from 'ngx-pipes';
 
-import { IonicModule } from '@ionic/angular';
-import { MaterialModule } from '../../modules/material.module';
-
-import { UpdateResiPage } from '../update-resi/update-resi.page';
-import { ResiPage } from './resi.page';
+import { UpdateResiPage } from './update-resi.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ResiPage
+    component: UpdateResiPage
   }
 ];
 
@@ -25,14 +22,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     NgPipesModule,
-    MaterialModule,
   ],
-  declarations: [
-    UpdateResiPage,
-    ResiPage,
-  ],
-  entryComponents: [
-    UpdateResiPage,
-  ]
+  declarations: [UpdateResiPage]
 })
-export class ResiPageModule {}
+export class UpdateResiPageModule {}

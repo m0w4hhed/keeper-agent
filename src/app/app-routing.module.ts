@@ -6,6 +6,7 @@ const routes: Routes = [
   { path: 'home', loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)},
   { path: 'scan', loadChildren: './pages/scan/scan.module#ScanPageModule' },
   { path: 'resi', loadChildren: './pages/resi/resi.module#ResiPageModule' },
+  { path: 'update-resi', loadChildren: './pages/update-resi/update-resi.module#UpdateResiPageModule' },
 ];
 
 @NgModule({

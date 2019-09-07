@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-title>EDIT PAKET</ion-title>
+    <ion-buttons slot="start">
+      <ion-button color="light" (click)="dismiss()">
+          <ion-icon slot="icon-only" name="arrow-round-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header text-center>
+      <ion-card-subtitle>ID# {{ data.id }}</ion-card-subtitle>
+      <ion-card-title no-margin><h3 no-margin>{{ data.cs }} - <strong>{{ data.penerima }}</strong></h3></ion-card-title>
+      <ion-card-subtitle no-margin>{{ data.nPenerima }}</ion-card-subtitle><br>
+      <ion-card-subtitle><ion-icon name="pin"></ion-icon>{{ data.alamat }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-item>
+      <ion-icon name="barcode"></ion-icon>
+      <ion-text>
+        <h5 *ngIf="data.resi && !editResi" no-margin>
+          <span>{{ data.resi }}</span>
+          <ion-buttons slot="secondary">
+            <ion-button (click)="editResi=true">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </h5>
+        <h5 *ngIf="!data.resi || editResi">
+          <ion-input no-padding [(ngModel)]="inputResi" placeholder="Input Resi Disini"></ion-input>
+          <ion-buttons *ngIf="!inputResi" slot="secondary">
+            <ion-button (click)="scan()">
+              <ion-icon slot="icon-only" name="qr-scanner"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons *ngIf="inputResi" slot="secondary">
+            <ion-button (click)="updateResi(inputResi)">
+              <ion-icon slot="icon-only" name="save"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </h5>
+      </ion-text>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="cube"></ion-icon>
+      <ion-text>
+        <h5 no-margin>
+          <strong>{{ data.ekspedisi }}<span *ngIf="data.service">-{{ data.service }}</span>:</strong> {{ data.totalOngkir | number}} ({{ data.berat }}Kg)
+          <span *ngIf="data.realOngkir && (data.realOngkir!==data.totalOngkir || data.realBerat!==data.berat)" style="color: red"> - {{ data.realOngkir | number }} ({{ data.realBerat }}Kg)</span>
+          <ion-buttons *ngIf="!editOngkir" slot="secondary">
+            <ion-button (click)="editOngkir=true">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </h5>
+      </ion-text>
+    </ion-item>
+    <ion-item *ngIf="editOngkir">
+      <ion-icon name="wallet"></ion-icon>
+      <ion-text>
+        <h5>
+          <ion-input no-padding [(ngModel)]="inputOngkir" type="number" placeholder="Real Ongkir"></ion-input>
+          <ion-input no-padding [(ngModel)]="inputBerat" type="number" placeholder="Real Berat (Kg)"></ion-input>
+          <ion-buttons slot="secondary">
+            <ion-button (click)="updateOngkir(inputOngkir, inputBerat)">
+              <ion-icon slot="icon-only" name="save"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </h5>
+      </ion-text>
+    </ion-item>
+    <ion-list>
+      <ion-list-header><h4><strong>List Barang:</strong></h4></ion-list-header>
+      <ion-item *ngFor="let barang of data.listBarang">
+        <ion-label>{{ barang.nama }} {{ barang.warna }}</ion-label>
+        <ion-note slot="end" color="tertiary">Rp{{ barang.harga | number}}</ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>ONGKIR:</strong></ion-label>
+        <ion-note slot="end" color="tertiary"><strong>Rp{{ data.ongkir * data.berat | number}}</strong></ion-note>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>TOTAL:</strong></ion-label>
+        <ion-note slot="end" color="tertiary"><strong>Rp{{ [(data.listBarang | pluck:'harga' | sum),(data.ongkir * data.berat)] | sum | number}}</strong></ion-note>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>
