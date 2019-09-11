@@ -18,14 +18,17 @@
       <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ items.value | pluck: 'totalOngkir' | sum | number }} <br> Real:  {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
       <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</span></ion-label>
     </ion-item-divider>
-    <ion-item-sliding *ngFor="let item of items.value">
+    <ion-item-sliding *ngFor="let item of items.value | orderBy: 'penerima'">
       <ion-item [color]="!item.resi ? 'warning' : 'light'" (click)="detailPaket(item)">
         <ion-label>
           <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.totalOngkir | number }} ({{ item.berat }}Kg)</span></ion-note>
           <ion-card-title>
           <strong>{{ item.cs }} - {{ item.penerima }}</strong>
           </ion-card-title>
-          <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong><span *ngIf="item.realOngkir && (item.realOngkir!==item.totalOngkir || item.realBerat!==item.berat)" style="color: red"> | {{ item.realOngkir | number }} ({{ item.realBerat }}Kg)</span></ion-note>
+          <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong>
+            <span *ngIf="item.realOngkir && (item.realOngkir!==item.totalOngkir || item.realBerat!==item.berat)"
+                  [class]="(item.realOngkir>item.totalOngkir) ? 'kurang' : 'lebih'"> | {{ item.realOngkir | number }} ({{ item.realBerat }}Kg)</span>
+          </ion-note>
         </ion-label>
         <ion-note slot="end">
           <ion-label color="tertiary">{{ item.status }}</ion-label>

@@ -13,17 +13,21 @@ import { ScannerService } from 'src/app/services/scanner.service';
 export class UpdateResiPage implements OnInit {
 
   data;
-  inputResi = '';
+
+  inputResi;
   inputOngkir;
   inputBerat;
+  inputTgl;
 
   afterEdit = false;
+  afterEditOngkir = false;
 
   editResi = false;
   editOngkir = false;
+  editTgl = false;
 
   constructor(
-    private modalCtrl: ModalController,
+    public modalCtrl: ModalController,
     private dataService: DataService,
     private popup: PopupService,
     private barcodeScanner: BarcodeScanner,
@@ -41,6 +45,12 @@ export class UpdateResiPage implements OnInit {
     this.editOngkir = false;
     this.popup.showToast('Ongkir berhasil diperbarui', 2000);
     this.afterEdit = true;
+    this.afterEditOngkir = true;
+  }
+  updateTgl(tgl) {
+    this.dataService.updateData(this.data.id, {tglDikirim: tgl.trim()});
+    this.editTgl = false;
+    this.popup.showToast('Tanggal kirim berhasil diperbarui', 2000);
   }
 
   scan() {
@@ -54,10 +64,16 @@ export class UpdateResiPage implements OnInit {
   }
 
   ngOnInit() {
+    this.inputTgl = this.data.tglDikirim;
+    this.inputOngkir = this.data.totalOngkir;
+    this.inputBerat = this.data.berat;
+    if (this.data.resi) {
+      this.inputResi = this.data.resi;
+    }
   }
   dismiss() {
     if (this.afterEdit) {
-      if (!this.data.realOngkir) {
+      if (!this.afterEditOngkir) {
         this.updateOngkir(this.data.totalOngkir, this.data.berat);
         this.popup.showToast('Perubahan disimpan', 2000);
       }
