@@ -15,10 +15,12 @@ import { ScannerService } from 'src/app/services/scanner.service';
 })
 export class ScanPage {
 
+  task;
+  onLoad = true;
+
   encodedData: any;
   scannedData: string;
 
-  task;
   closingData: Observable<any>;
 
   constructor(
@@ -29,6 +31,7 @@ export class ScanPage {
     ) {
     // this.encodedData = 'https://www.FreakyJolly.com';
     this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD'));
+    this.task = this.closingData.subscribe(() => this.onLoad = false);
   }
 
   scanMassal() {

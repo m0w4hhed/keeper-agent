@@ -18,6 +18,9 @@ import { UpdateResiPage } from 'src/app/pages/update-resi/update-resi.page';
 })
 export class ResiPage {
 
+  task;
+  onLoad = false;
+
   encodedData: any;
   scannedData: string;
 
@@ -26,7 +29,6 @@ export class ResiPage {
 
   now;
 
-  task;
   closingData: Observable<any>;
 
   constructor(
@@ -41,8 +43,10 @@ export class ResiPage {
 
   tampilkan() {
     if (this.now) {
+      this.onLoad = true;
       const tgl = moment(this.now).format('YYYYMMDD');
       this.closingData = this.dataService.getDatas(tgl);
+      this.task = this.closingData.subscribe(() => this.onLoad = false);
     } else {
       this.popupService.showToast('Pilih Tanggal Dulu', 2000);
     }
