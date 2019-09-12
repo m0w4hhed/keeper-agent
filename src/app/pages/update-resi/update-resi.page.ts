@@ -54,6 +54,7 @@ export class UpdateResiPage implements OnInit {
   }
 
   scan() {
+    this.editResi = true;
     this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
       this.inputResi = barcodeData.text;
     })

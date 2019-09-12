@@ -4,6 +4,7 @@ import { map, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { PopupService } from './popup.service';
 
 export interface Closing {
   id: string;
@@ -30,7 +31,10 @@ export class DataService {
   closing$: Observable<any>;
   mutasiFilter$: BehaviorSubject<string|null>;
 
-  constructor(public db: AngularFirestore) {
+  constructor(
+    public db: AngularFirestore,
+    private popup: PopupService,
+    ) {
     this.mutasiFilter$ = new BehaviorSubject(null);
     this.closing$ = db.collection('closing').snapshotChanges().pipe(
       map(actions => {
