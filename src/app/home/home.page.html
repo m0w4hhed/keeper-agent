@@ -1,19 +1,59 @@
+<ion-header>
+  <ion-toolbar color="tertiary" mode="ios">
+    <ion-title>NabiilahScan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+          <ion-card class="center" routerLink="/scan">
+            <img src="../../assets/messenger.svg" />
+            <ion-card-header>
+              <ion-card-subtitle>Scan Barang Keluar</ion-card-subtitle>
+              <ion-card-title><strong>KIRIM</strong></ion-card-title>
+            </ion-card-header>
+          </ion-card>
+      </ion-col>
+      <ion-col size="6">
+          <ion-card class="center"  routerLink="/resi">
+            <img src="../../assets/barcode-scanner.svg" />
+            <ion-card-header>
+              <ion-card-subtitle>Cari & Masukkan Resi</ion-card-subtitle>
+              <ion-card-title><strong>INPUT RESI</strong></ion-card-title>
+            </ion-card-header>
+          </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+          <ion-card class="center"  routerLink="/barang-masuk">
+            <img src="../../assets/cart.svg" />
+            <ion-card-header>
+              <ion-card-subtitle>Scan Barang Masuk</ion-card-subtitle>
+              <ion-card-title><strong>DATANG</strong></ion-card-title>
+            </ion-card-header>
+          </ion-card>
+      </ion-col>
+      <ion-col>
+          <ion-card class="center"  routerLink="/barang-masuk">
+            <img src="../../assets/package.svg" />
+            <ion-card-header>
+              <ion-card-subtitle>List Ambilan Toko</ion-card-subtitle>
+              <ion-card-title><strong>LIST</strong></ion-card-title>
+            </ion-card-header>
+          </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <div class="vertical-center">
-    <ion-card class="center" routerLink="/scan">
-    <img src="../../assets/qr-code.svg" />
-    <ion-card-header>
-      <ion-card-subtitle>Scan Barang Keluar</ion-card-subtitle>
-      <ion-card-title><strong>KIRIM</strong></ion-card-title>
-    </ion-card-header>
-  </ion-card>
   <br>
-  <ion-card class="center"  routerLink="/resi">
-    <img src="../../assets/invoice.svg" />
-    <ion-card-header>
-      <ion-card-subtitle>Cari dan Masukkan Resi</ion-card-subtitle>
-      <ion-card-title><strong>INPUT RESI</strong></ion-card-title>
-    </ion-card-header>
-  </ion-card>
   </div>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar text-center color="tertiary" mode="ios">
+    <ion-text>Aplikasi Segala Scan</ion-text>
+  </ion-toolbar>
+</ion-footer>

@@ -1,1 +1,4 @@
-ionic cordova build android --prod --release
+jalankan aplikasi: "npm start"
+build project menjadi apk: "npm build" atau "npm run build"
+
+jangan lupa sign & align apk setelah build
