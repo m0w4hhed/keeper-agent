@@ -34,12 +34,12 @@
         </h5>
         <h5 *ngIf="!data.resi || editResi" no-margin>
           <ion-input no-padding [(ngModel)]="inputResi" placeholder="Input Resi Disini"></ion-input>
-          <ion-buttons *ngIf="!editResi" slot="secondary">
+          <ion-buttons *ngIf="!editResi || !inputResi" slot="secondary">
             <ion-button (click)="scan()">
               <ion-icon slot="icon-only" name="qr-scanner"></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-buttons *ngIf="editResi" slot="secondary">
+          <ion-buttons *ngIf="editResi || inputResi" slot="secondary">
             <ion-button (click)="updateResi(inputResi)">
               <ion-icon slot="icon-only" name="save"></ion-icon>
             </ion-button>

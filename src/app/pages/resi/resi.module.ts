@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { NgPipesModule } from 'ngx-pipes';
-
 import { IonicModule } from '@ionic/angular';
 import { MaterialModule } from '../../modules/material.module';
 
 import { ResiPage } from './resi.page';
+import { NgPluckPipeModule, NgSumPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
 
 const routes: Routes = [
   {
@@ -23,8 +22,12 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    NgPipesModule,
     MaterialModule,
+    NgPluckPipeModule,
+    NgSumPipeModule,
+    NgGroupByPipeModule,
+    NgOrderByPipeModule,
+    NgFlattenPipeModule,
   ],
   declarations: [
     ResiPage,

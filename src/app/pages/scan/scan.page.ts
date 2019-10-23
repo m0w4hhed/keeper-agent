@@ -7,6 +7,7 @@ import { PopupService } from '../../services/popup.service';
 
 import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-scan',
@@ -27,7 +28,8 @@ export class ScanPage {
     private barcodeScanner: BarcodeScanner,
     private scanner: ScannerService,
     private dataService: DataService,
-    private popupService: PopupService
+    private popupService: PopupService,
+    private alertController: AlertController,
     ) {
     // this.encodedData = 'https://www.FreakyJolly.com';
     this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD'));
@@ -43,14 +45,45 @@ export class ScanPage {
           tglDikirim: this.dataService.getTime('YYYYMMDD'),
           wktDikirim: now
         });
-        this.popupService.showToast('Dikirim', 1000);
-      } else {
-        this.popupService.showAlert('Error!', 'Barcode Salah Bro!');
       }
     })
     .catch(err => {
       this.popupService.showAlert('Error: ', err);
     });
+  }
+  async scanManual() {
+    const alert = await this.alertController.create({
+      header: 'Scan Manual',
+      mode: 'ios',
+      inputs: [{
+        name: 'id', type: 'text',
+        placeholder: 'Masukkan ID Invoice Disini',
+        min: 16, max: 16
+        },
+      ],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => { }
+      }, {
+        text: 'Kirim!',
+        cssClass: 'tertiary',
+        handler: (data) => {
+          if (data.id && data.id.length === 16) {
+            const now = moment().toDate().getTime();
+            this.dataService.updateData(data.id, {
+              status: 'Dikirim',
+              tglDikirim: this.dataService.getTime('YYYYMMDD'),
+              wktDikirim: now
+            });
+          } else {
+            this.popupService.showAlert('Salah!', 'Barcode Salah Tulis Bro!');
+          }
+          console.log(data.id);
+        }
+      }]
+    });
+    await alert.present();
   }
 
   /*

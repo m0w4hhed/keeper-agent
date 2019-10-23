@@ -13,16 +13,16 @@
 <ion-content no-padding>
 
 <div *ngIf="closingData | async; let closingan">
-  <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
+  <ion-card *ngFor="let items of closingan | groupBy:'ekspedisi'">
     <ion-item-divider color="tertiary">
       <ion-icon slot="start" name="cube"></ion-icon>
       <ion-label><span class="eksp"><strong>{{ items.key }}</strong> - {{ items.value.length }} Paket {{items.toggle}}</span></ion-label>
       <ion-note slot="end" class="pc">Total: {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</ion-note>
     </ion-item-divider>
-    <div *ngFor="let item of items.value">
+    <div *ngFor="let item of items.value | orderBy:'penerima' ">
       <ion-item (click)="item.switch=!item.switch">
         <ion-label>
-          <ion-note>{{ item.id }}</ion-note>
+          <ion-note>{{ item.id }} <strong>({{ item.cs }})</strong></ion-note>
           <ion-card-title>
           {{ item.penerima }} 
           </ion-card-title>
@@ -52,7 +52,14 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
-    <ion-button strong="true" expand="block" mode="ios" (click)="scanMassal()" color="tertiary"><ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN KIRIM</ion-button>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-button (click)="scanManual()">
+        <ion-icon color="light" slot="icon-only" name="barcode"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-button style="margin-right:10px" strong="true" fill="outline" expand="block" (click)="scanMassal()" color="light">
+      <ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN KIRIM
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

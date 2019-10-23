@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-import { NgPipesModule } from 'ngx-pipes';
 
 import { UpdateResiPage } from './update-resi.page';
+import { NgPluckPipeModule, NgSumPipeModule } from 'angular-pipes';
 
 const routes: Routes = [
   {
@@ -21,7 +21,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    NgPipesModule,
+    NgPluckPipeModule,
+    NgSumPipeModule,
   ],
   declarations: [UpdateResiPage]
 })

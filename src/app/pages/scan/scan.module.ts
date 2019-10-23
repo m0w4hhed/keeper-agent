@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { NgPipesModule } from 'ngx-pipes';
-
 import { IonicModule } from '@ionic/angular';
 
 import { ScanPage } from './scan.page';
+import { NgPluckPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
 
 const routes: Routes = [
   {
@@ -22,7 +21,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    NgPipesModule,
+    NgPluckPipeModule,
+    NgGroupByPipeModule,
+    NgOrderByPipeModule,
+    NgFlattenPipeModule,
   ],
   declarations: [ScanPage]
 })

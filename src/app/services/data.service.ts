@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { PopupService } from './popup.service';
+import * as firebase from 'firebase';
 
 export interface Closing {
   id: string;
@@ -79,8 +80,63 @@ export class DataService {
     return this.closing$;
   }
 
-  updateData(id: string, data) {
-    console.log(id + '--' + data);
-    this.db.collection('closing').doc(id).update(data);
+  async analyticValidator() {
+    try {
+      const tahun = new Date().getFullYear().toString();
+      const bulan = ('0' + (new Date().getMonth() + 1)).slice(-2);
+      const hari = ('0' + (new Date().getDate())).slice(-2);
+      const olahdataAdminRef = this.db.collection('olahdata').doc('barang').collection('per-cs').doc(tahun + '-' + bulan);
+      const olahdataKeepAdminRef = olahdataAdminRef.collection('success').doc(hari).ref;
+      const olahdataKeepBulanan = await olahdataAdminRef.ref.get();
+      const olahdataKeep = await olahdataKeepAdminRef.get();
+      if (!olahdataKeepBulanan.exists) {
+        olahdataAdminRef.set({ keep: 0, lost: 0, diambil: 0, success: 0}).then(async () => {
+          console.log('tambah bulan');
+          if (!olahdataKeep.exists) {
+            olahdataKeepAdminRef.set({ A: 0, D: 0, F: 0, H: 0, M: 0, N: 0, V: 0, W: 0, total: 0 });
+            console.log('tambah hari');
+          }
+        });
+      }
+      return { olahdataKeepBulanan, olahdataKeep,  };
+    } catch (error) {
+      this.popup.showAlert('Error!', error);
+    }
+  }
+  async updateData(id: string, data) {
+    try {
+      const batch = this.db.firestore.batch();
+      const barangRef = this.db.collection('closing').doc(id).ref;
+      const barangDoc = await barangRef.get();
+      if (barangDoc.exists) {
+        if (barangDoc.data().status !== 'Dikirim') {
+          const tahun = new Date().getFullYear().toString();
+          const bulan = ('0' + (new Date().getMonth() + 1)).slice(-2);
+          const hari = ('0' + (new Date().getDate())).slice(-2);
+          const kodeCS = barangDoc.data().cs;
+          const jum = barangDoc.data().listBarang.length;
+          const olahdataAdminRef = this.db.collection('olahdata').doc('barang').collection('per-cs').doc(tahun + '-' + bulan);
+          const olahdataKeepAdminRef = olahdataAdminRef.collection('success').doc(hari).ref;
+          // Update olahdata Admin
+          // this.analyticValidator();
+          batch.set(olahdataKeepAdminRef, {
+                [kodeCS]: firebase.firestore.FieldValue.increment(jum),
+                total: firebase.firestore.FieldValue.increment(jum)
+          }, { merge: true });
+          batch.set(olahdataAdminRef.ref, {success: firebase.firestore.FieldValue.increment(jum)}, { merge: true });
+          batch.update(barangRef, data);
+          batch.commit().then(
+                (success) => this.popup.showToast(`${barangDoc.data().penerima} Dikirim`, 700),
+                (error) => this.popup.showAlert('Error', error)
+          );
+        } else {
+          this.popup.showAlert('Sudah Discan!', 'Invoice Sudah Discan Dikirim ya!');
+        }
+      } else {
+        this.popup.showAlert('Tidak Ketemu!', 'Invoice tidak ditemukan di database bro!');
+      }
+    } catch (error) {
+      this.popup.showAlert('Error!', error);
+    }
   }
 }
