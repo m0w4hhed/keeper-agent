@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UpdateResiPageModule } from 'src/app/pages/update-resi/update-resi.module';
+import { BarangMasukPageModule } from 'src/app/pages/barang-masuk/barang-masuk.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,7 +31,9 @@ import { UpdateResiPageModule } from 'src/app/pages/update-resi/update-resi.modu
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     BrowserAnimationsModule,
+    // Page Modules
     UpdateResiPageModule,
+    BarangMasukPageModule,
   ],
   providers: [
     StatusBar,

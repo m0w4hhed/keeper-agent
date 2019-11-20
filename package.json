@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ionic serve",
-    "build": "ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\",
+    "build": "ionic cordova resources android && ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

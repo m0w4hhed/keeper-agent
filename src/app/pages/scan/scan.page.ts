@@ -40,7 +40,7 @@ export class ScanPage {
     this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
       if (barcodeData.text && barcodeData.text.length === 16) {
         const now = moment().toDate().getTime();
-        this.dataService.updateData(barcodeData.text, {
+        this.dataService.updateDikirim(barcodeData.text, {
           status: 'Dikirim',
           tglDikirim: this.dataService.getTime('YYYYMMDD'),
           wktDikirim: now
@@ -71,7 +71,7 @@ export class ScanPage {
         handler: (data) => {
           if (data.id && data.id.length === 16) {
             const now = moment().toDate().getTime();
-            this.dataService.updateData(data.id, {
+            this.dataService.updateDikirim(data.id, {
               status: 'Dikirim',
               tglDikirim: this.dataService.getTime('YYYYMMDD'),
               wktDikirim: now

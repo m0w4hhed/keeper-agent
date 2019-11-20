@@ -35,22 +35,34 @@ export class UpdateResiPage implements OnInit {
   ) {}
 
   updateResi(resi) {
-    this.dataService.updateData(this.data.id, {resi});
-    this.editResi = false;
-    this.popup.showToast('Resi berhasil diperbarui', 2000);
-    this.afterEdit = true;
+    this.dataService.updateResi(this.data.id, {resi}).then(
+      () => {
+        this.editResi = false;
+        this.popup.showToast('Resi berhasil diperbarui', 1000);
+        this.afterEdit = true;
+      },
+      (error) => this.popup.showAlert('Resi gagal diperbarui', error)
+    );
   }
   updateOngkir(ongkir, berat) {
-    this.dataService.updateData(this.data.id, {realOngkir: Number(ongkir), realBerat: Number(berat)});
-    this.editOngkir = false;
-    this.popup.showToast('Ongkir berhasil diperbarui', 2000);
-    this.afterEdit = true;
-    this.afterEditOngkir = true;
+    this.dataService.updateResi(this.data.id, {realOngkir: Number(ongkir), realBerat: Number(berat)}).then(
+      () => {
+        this.editOngkir = false;
+        this.popup.showToast('Ongkir berhasil diperbarui', 1000);
+        this.afterEdit = true;
+        this.afterEditOngkir = true;
+      },
+      (error) => this.popup.showAlert('Ongkir gagal diperbarui', error)
+    );
   }
   updateTgl(tgl) {
-    this.dataService.updateData(this.data.id, {tglDikirim: tgl.trim()});
-    this.editTgl = false;
-    this.popup.showToast('Tanggal kirim berhasil diperbarui', 2000);
+    this.dataService.updateResi(this.data.id, {tglDikirim: tgl.trim()}).then(
+      () => {
+        this.editTgl = false;
+        this.popup.showToast('Tanggal kirim berhasil diperbarui', 1000);
+      },
+      (error) => this.popup.showAlert('Tanggal kirim gagal diperbarui', error)
+    );
   }
 
   scan() {

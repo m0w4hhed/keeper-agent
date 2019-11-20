@@ -103,7 +103,7 @@ export class DataService {
       this.popup.showAlert('Error!', error);
     }
   }
-  async updateData(id: string, data) {
+  async updateDikirim(id: string, data) {
     try {
       const batch = this.db.firestore.batch();
       const barangRef = this.db.collection('closing').doc(id).ref;
@@ -137,6 +137,13 @@ export class DataService {
       }
     } catch (error) {
       this.popup.showAlert('Error!', error);
+    }
+  }
+  async updateResi(id: string, data: any) {
+    try {
+      return await this.db.collection('closing').doc(id).update(data);
+    } catch (err) {
+      throw err;
     }
   }
 }

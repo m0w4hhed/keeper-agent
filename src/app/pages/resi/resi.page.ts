@@ -62,25 +62,6 @@ export class ResiPage {
     return await modal.present();
   }
 
-  updateResi(item) {
-    if (this.scannedData) {
-      if (!this.salahOngkir) {
-        this.dataService.updateData(item.id, {
-          resi: this.scannedData,
-          realOngkir: Number(item.ongkir)
-        });
-        this.reset();
-      } else {
-        const real = this.realOngkir.toString().trim().replace(/[^0-9]/g, '');
-        this.dataService.updateData(item.id, {
-          resi: this.scannedData,
-          realOngkir: Number(real)
-        });
-        this.reset();
-      }
-    }
-  }
-
   reset() {
       this.popupService.showToast('Resi Diupdate!', 2000);
       this.scannedData = '';
