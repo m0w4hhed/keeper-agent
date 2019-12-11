@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { ModalController } from '@ionic/angular';
 
-import { UpdateResiPage } from 'src/app/pages/update-resi/update-resi.page';
+import { UpdateResiPage } from 'src/app/pages/resi/update-resi/update-resi.page';
 
 @Component({
   selector: 'app-resi',

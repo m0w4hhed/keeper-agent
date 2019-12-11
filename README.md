@@ -11,6 +11,6 @@
 - NEW THEME!
 - change ngx-pipes to angular-pipes package
 
-### Next update
+### v1.1.1:
 - add Scan Barang Masuk feature
 - add Daftar List Ambilan feature

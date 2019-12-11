@@ -5,13 +5,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { BarangMasukPage } from './barang-masuk.page';
+import { ListAmbilanPage } from './list-ambilan.page';
 import { NgPluckPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
 
 const routes: Routes = [
   {
     path: '',
-    component: BarangMasukPage
+    component: ListAmbilanPage
   }
 ];
 
@@ -26,6 +26,6 @@ const routes: Routes = [
     NgGroupByPipeModule,
     NgOrderByPipeModule,
   ],
-  declarations: [BarangMasukPage]
+  declarations: [ListAmbilanPage]
 })
-export class BarangMasukPageModule {}
+export class ListAmbilanPageModule {}

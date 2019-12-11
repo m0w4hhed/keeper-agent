@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar color="tertiary" mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <strong>BARANG</strong> MASUK
+    </ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="tertiary">
+      <ion-card>
+          <ion-item-divider color="tertiary">
+            <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
+            <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
+          </ion-item-divider>
+      </ion-card>
+  </ion-toolbar>
+  <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
+</ion-header>
+ 
+<ion-content no-padding>
+
+<div *ngIf="dataAmbilan">
+  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'cs'; trackBy: addExpand">
+    <ion-item-divider color="tertiary" (click)="ambilan.expand=!ambilan.expand">
+      <ion-icon slot="start" name="cube"></ion-icon>
+      <ion-label><span class="eksp"><strong>ADMIN {{ ambilan.key }}</strong> - {{ ambilan.value.length }}pcs</span></ion-label>
+      <ion-note slot="end" class="pc">Rp.{{ hitung(ambilan.value) | number }}</ion-note>
+    </ion-item-divider>
+    <ion-list *ngIf="ambilan.expand" class="ion-no-padding">
+        <ion-item-sliding *ngFor="let data of ambilan.value | orderBy:'barang'">
+          <ion-item [color]="data.status=='diambil'?'success':(data.status=='kosong'?'danger':(data.status=='fullkeep'?'warning':'light'))">
+            <ion-label>
+              <ion-note>{{ data.penerima }} <strong>({{ data.cs }})</strong></ion-note>
+              <ion-card-title>
+              {{ data.barang }} {{ data.warna }}
+              </ion-card-title>
+            </ion-label>
+            <ion-badge slot="end" color="light" style="border-radius: 10px;padding: 5px 10px">{{ data.status }}</ion-badge>
+          </ion-item>
+        </ion-item-sliding>
+    </ion-list>
+  </ion-card>
+</div>
+
+<!--
+  <h1>Enter Value to Create QR code</h1>
+  <ion-input type="text" [(ngModel)]="encodedData"></ion-input>
+ 
+  <ion-button (click)="encodedText()">
+    Create QR
+  </ion-button>
+-->
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar color="tertiary" *ngIf="dataAmbilan">
+    <ion-title>Total Ambilan {{tanggal}} :</ion-title>
+    <ion-chip slot="end">
+      <ion-label color="light">{{ dataAmbilan.length }}pcs</ion-label>
+    </ion-chip>
+  </ion-toolbar>
+</ion-footer>

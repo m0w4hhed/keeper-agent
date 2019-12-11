@@ -17,7 +17,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { UpdateResiPageModule } from 'src/app/pages/update-resi/update-resi.module';
+import { UpdateResiPageModule } from 'src/app/pages/resi/update-resi/update-resi.module';
 import { BarangMasukPageModule } from 'src/app/pages/barang-masuk/barang-masuk.module';
 
 @NgModule({

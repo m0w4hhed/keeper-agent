@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { Observable } from 'rxjs';
 
-import { DataService } from '../../services/data.service';
+import { DataService, Ambilan } from '../../services/data.service';
 import { PopupService } from '../../services/popup.service';
 
 import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-barang-masuk',
@@ -15,59 +15,93 @@ import { ScannerService } from 'src/app/services/scanner.service';
 })
 export class BarangMasukPage {
 
-  task;
-  onLoad = true;
-
-  encodedData: any;
-  scannedData: string;
-
-  closingData: Observable<any>;
+  dataAmbilan: Ambilan[]; task;
+  onload = true;
 
   constructor(
     private barcodeScanner: BarcodeScanner,
     private scanner: ScannerService,
     private dataService: DataService,
-    private popupService: PopupService
+    private popup: PopupService,
+    private alertController: AlertController,
     ) {
-    // this.encodedData = 'https://www.FreakyJolly.com';
-    this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD'));
-    this.task = this.closingData.subscribe(() => this.onLoad = false);
+    this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD')).subscribe(res => {
+      this.onload = false;
+      this.dataAmbilan = res;
+    });
   }
 
   scanMassal() {
     this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
-      if (barcodeData.text && barcodeData.text.length === 16) {
-        const now = moment().toDate().getTime();
-        this.dataService.updateResi(barcodeData.text, {
-          status: 'Dikirim',
-          tglDikirim: this.dataService.getTime('YYYYMMDD'),
-          wktDikirim: now
-        });
-        this.popupService.showToast('Dikirim', 1000);
-      } else {
-        this.popupService.showAlert('Error!', 'Barcode Salah Bro!');
-      }
+      this.barangDiambil(barcodeData.text);
     })
     .catch(err => {
-      this.popupService.showAlert('Error: ', err);
+      this.popup.showAlert('Error Camera: ', err);
     });
   }
-
-  /*
-  encodedText() {
-    this.barcodeScanner
-      .encode(this.barcodeScanner.Encode.TEXT_TYPE, this.encodedData)
-      .then(
-        encodedData => {
-          console.log(encodedData);
-          this.encodedData = encodedData;
+  async scanManual() {
+    const alert = await this.alertController.create({
+      header: 'Scan Manual',
+      mode: 'ios',
+      inputs: [{
+        name: 'id', type: 'text',
+        placeholder: 'Masukkan Barcode barang disini',
+        min: 16, max: 16
         },
-        err => {
-          console.log('Error occured : ' + err);
+      ],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => { }
+      }, {
+        text: 'Masuk!',
+        cssClass: 'tertiary',
+        handler: (data) => {
+          this.barangDiambil(data.id);
         }
-      );
+      }]
+    });
+    await alert.present();
   }
-  */
+
+  barangDiambil(barcode: string) {
+    if (barcode && barcode.length === 16) {
+      const now = moment().toDate().getTime();
+      this.dataService.updateAmbilan(barcode, {
+        status: 'diambil',
+        tglScan: this.dataService.getTime('YYYYMMDD'),
+        wktScan: now
+      }).then(
+        () => this.popup.showToast('Barang Diambil!', 1000),
+        (err) => this.popup.showAlert('Barcode Salah!', err)
+      );
+    }
+  }
+
+  gantiStatus(barang: Ambilan, status: string) {
+    const now = moment().toDate().getTime();
+    this.dataService.updateAmbilan(barang.id, {
+      status,
+      tglScan: this.dataService.getTime('YYYYMMDD'),
+      wktScan: now
+    }).then(
+      () => this.popup.showToast(`Barang ${status}!`, 1000),
+      (err) => this.popup.showAlert('Barcode Salah!', err)
+    );
+  }
+
+  hitung(barangToko: Ambilan[]): number {
+    let total = 0;
+    barangToko.forEach(barang => {
+      if (barang.status === 'diambil') {
+        total += barang.hargaBeli;
+      }
+    });
+    return total;
+  }
+  addExpand(index: number, obj) {
+    return { ...obj, expand: false };
+  }
 
   onDestroy() {
     this.task.unsubscribe();

@@ -4,40 +4,53 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <strong>NABIILAH</strong>STORE
+      <strong>AMBILAN</strong> BARANG
     </ion-title>
   </ion-toolbar>
-  <ion-progress-bar color="tertiary" *ngIf="onLoad" type="indeterminate"></ion-progress-bar>
+  <ion-toolbar color="tertiary" *ngIf="dataAmbilan">
+    <ion-title>Total Pengeluaran:</ion-title>
+    <ion-chip slot="end">
+      <ion-label color="light">Rp.{{ hitung(dataAmbilan) | number }}</ion-label>
+    </ion-chip>
+  </ion-toolbar>
+  <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
 <ion-content no-padding>
 
-<div *ngIf="closingData | async; let closingan">
-  <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi' | keyvalue">
-    <ion-item-divider color="tertiary">
+<div *ngIf="dataAmbilan">
+  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'toko'; trackBy: addExpand">
+    <ion-item-divider color="tertiary" (click)="ambilan.expand=!ambilan.expand">
       <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>{{ items.key }}</strong> - {{ items.value.length }} Paket {{items.toggle}}</span></ion-label>
-      <ion-note slot="end" class="pc">Total: {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</ion-note>
+      <ion-label><span class="eksp"><strong>{{ ambilan.key }}</strong> - {{ ambilan.value.length }}pcs</span></ion-label>
+      <ion-note slot="end" class="pc">Rp.{{ hitung(ambilan.value) | number }}</ion-note>
     </ion-item-divider>
-    <div *ngFor="let item of items.value">
-      <ion-item (click)="item.switch=!item.switch">
-        <ion-label>
-          <ion-note>{{ item.id }}</ion-note>
-          <ion-card-title>
-          {{ item.penerima }} 
-          </ion-card-title>
-        </ion-label>
-        <ion-note slot="end">
-          <ion-label color="tertiary">{{ item.status }}</ion-label>
-          <ion-label>{{ item.listBarang.length }}pcs </ion-label>
-        </ion-note>
-      </ion-item>
-      <div *ngIf="item.switch">
-        <ion-item color="light" *ngFor="let barang of item.listBarang">
-          <ion-label>{{ barang.nama }}</ion-label>
-        </ion-item>
-      </div>
-    </div>
+    <ion-list *ngIf="ambilan.expand" class="ion-no-padding">
+        <ion-item-sliding *ngFor="let data of ambilan.value | orderBy:'barang'">
+          <ion-item [color]="data.status=='diambil'?'success':(data.status=='kosong'?'danger':(data.status=='fullkeep'?'warning':'light'))">
+            <ion-label>
+              <ion-note>{{ data.penerima }} <strong>({{ data.cs }})</strong></ion-note>
+              <ion-card-title>
+              {{ data.barang }} {{ data.warna }}
+              </ion-card-title>
+            </ion-label>
+            <ion-badge slot="end" color="light" style="border-radius: 10px;padding: 5px 10px">{{ data.hargaBeli | number }}</ion-badge>
+          </ion-item>
+          <ion-item-options side="start">
+            <ion-item-option color="success" (click)="gantiStatus(data, 'diambil')">
+              <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+          <ion-item-options side="end">
+            <ion-item-option color="warning" (click)="gantiStatus(data, 'fullkeep')">
+              <ion-icon slot="icon-only" name="hand"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="gantiStatus(data, 'kosong')">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
   </ion-card>
 </div>
 
@@ -52,7 +65,14 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
-    <ion-button strong="true" expand="block" mode="ios" (click)="scanMassal()" color="tertiary"><ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN KIRIM</ion-button>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-button (click)="scanManual()">
+        <ion-icon color="light" slot="icon-only" name="barcode"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-button style="margin-right:10px" strong="true" fill="outline" expand="block" (click)="scanMassal()" color="light">
+      <ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN BARANG
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

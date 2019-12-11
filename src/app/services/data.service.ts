@@ -24,6 +24,20 @@ export interface Closing {
   status: string;
   switch: boolean;
 }
+export interface Ambilan {
+  id: string;
+  barang: string;
+  barcode: string;
+  cs: string;
+  date: string;
+  hargaBeli: number;
+  penerima: string;
+  pj: string;
+  status: string;
+  toko: string;
+  warna: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -145,5 +159,24 @@ export class DataService {
     } catch (err) {
       throw err;
     }
+  }
+
+  getAmbilan(YYYYMMDD: string): Observable<Ambilan[]> {
+    return this.db.collection<Ambilan>('orderan', ref =>
+      ref.where('date', '==', YYYYMMDD)
+    ).snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
+    );
+  }
+  async updateAmbilan(id: string, data: any) {
+    try {
+      return await this.db.collection('orderan').doc(id).update(data);
+    } catch (err) { throw err; }
   }
 }
