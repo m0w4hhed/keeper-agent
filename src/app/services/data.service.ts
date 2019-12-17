@@ -176,7 +176,7 @@ export class DataService {
   }
   async updateAmbilan(id: string, data: any) {
     try {
-      return await this.db.collection('orderan').doc(id).update(data);
+      return this.db.collection('orderan').doc(id).update(data);
     } catch (err) { throw err; }
   }
 }

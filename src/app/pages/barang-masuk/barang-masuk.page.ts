@@ -18,6 +18,8 @@ export class BarangMasukPage {
   dataAmbilan: Ambilan[]; task;
   onload = true;
 
+  now; tanggal;
+
   constructor(
     private barcodeScanner: BarcodeScanner,
     private scanner: ScannerService,
@@ -25,10 +27,29 @@ export class BarangMasukPage {
     private popup: PopupService,
     private alertController: AlertController,
     ) {
+    this.tanggal = this.dataService.getTime('DD');
     this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD')).subscribe(res => {
       this.onload = false;
       this.dataAmbilan = res;
     });
+  }
+
+  test() {
+    console.log(this.now);
+  }
+  tampilkan() {
+    if (this.now) {
+      this.onload = true;
+      this.task.unsubscribe();
+      const tgl = moment(this.now).format('YYYYMMDD');
+      this.tanggal = moment(this.now).format('DD');
+      this.task = this.dataService.getAmbilan(tgl).subscribe(res => {
+        this.onload = false;
+        this.dataAmbilan = res;
+      });
+    } else {
+      this.popup.showToast('Pilih Tanggal Dulu', 1000);
+    }
   }
 
   scanMassal() {
@@ -65,7 +86,7 @@ export class BarangMasukPage {
   }
 
   barangDiambil(barcode: string) {
-    if (barcode && barcode.length === 16) {
+    if (barcode && barcode.length === 18) {
       const now = moment().toDate().getTime();
       this.dataService.updateAmbilan(barcode, {
         status: 'diambil',
@@ -75,6 +96,8 @@ export class BarangMasukPage {
         () => this.popup.showToast('Barang Diambil!', 1000),
         (err) => this.popup.showAlert('Barcode Salah!', err)
       );
+    } else {
+      this.popup.showAlert('Barcode Error!', 'Barcode terlalu panjang / pendek');
     }
   }
 
@@ -90,7 +113,7 @@ export class BarangMasukPage {
     );
   }
 
-  hitung(barangToko: Ambilan[]): number {
+  hitungDiambil(barangToko: Ambilan[]): number {
     let total = 0;
     barangToko.forEach(barang => {
       if (barang.status === 'diambil') {

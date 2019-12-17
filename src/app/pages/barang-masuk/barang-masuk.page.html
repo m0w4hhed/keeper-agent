@@ -4,13 +4,22 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <strong>AMBILAN</strong> BARANG
+      <strong>BARANG</strong> MASUK
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="calendar" slot="end"></ion-icon>
+        <ion-datetime [(ngModel)]="now" (ionChange)="tampilkan()"
+          display-format="DD" pickerFormat="DD MMM YYYY" [placeholder]="tanggal"
+          style="font-size:15px;padding:0;margin:2px -5px 0;font-weight:bold;color:white"
+        ></ion-datetime>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar color="tertiary" *ngIf="dataAmbilan">
-    <ion-title>Total Pengeluaran:</ion-title>
+    <ion-title style="font-size: 18px">Total Pengeluaran:</ion-title>
     <ion-chip slot="end">
-      <ion-label color="light">Rp.{{ hitung(dataAmbilan) | number }}</ion-label>
+      <ion-label color="light">Rp.{{ hitungDiambil(dataAmbilan) | number }}</ion-label>
     </ion-chip>
   </ion-toolbar>
   <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
@@ -19,11 +28,11 @@
 <ion-content no-padding>
 
 <div *ngIf="dataAmbilan">
-  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'toko'; trackBy: addExpand">
+  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'toko' | orderBy:'key'; trackBy: addExpand">
     <ion-item-divider color="tertiary" (click)="ambilan.expand=!ambilan.expand">
       <ion-icon slot="start" name="cube"></ion-icon>
       <ion-label><span class="eksp"><strong>{{ ambilan.key }}</strong> - {{ ambilan.value.length }}pcs</span></ion-label>
-      <ion-note slot="end" class="pc">Rp.{{ hitung(ambilan.value) | number }}</ion-note>
+      <ion-note slot="end" class="pc">Rp.{{ hitungDiambil(ambilan.value) | number }}</ion-note>
     </ion-item-divider>
     <ion-list *ngIf="ambilan.expand" class="ion-no-padding">
         <ion-item-sliding *ngFor="let data of ambilan.value | orderBy:'barang'">
@@ -66,12 +75,7 @@
 
 <ion-footer>
   <ion-toolbar color="tertiary">
-    <ion-buttons slot="start">
-      <ion-button (click)="scanManual()">
-        <ion-icon color="light" slot="icon-only" name="barcode"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-button style="margin-right:10px" strong="true" fill="outline" expand="block" (click)="scanMassal()" color="light">
+    <ion-button style="margin:0 10px" strong="true" fill="outline" expand="block" (click)="scanMassal()" color="light">
       <ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN BARANG
     </ion-button>
   </ion-toolbar>

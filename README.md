@@ -14,3 +14,10 @@
 ### v1.1.1:
 - add Scan Barang Masuk feature
 - add Daftar List Ambilan feature
+
+### v1.1.2:
+- bug fixes
+
+### v1.1.3:
+- add date picker on Barang Masuk & List Ambilan
+- add IonChange on datePicker

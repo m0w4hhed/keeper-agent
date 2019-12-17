@@ -4,16 +4,17 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <strong>BARANG</strong> MASUK
+      <strong>LIST</strong> AMBILAN
     </ion-title>
-  </ion-toolbar>
-  <ion-toolbar color="tertiary">
-      <ion-card>
-          <ion-item-divider color="tertiary">
-            <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
-            <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
-          </ion-item-divider>
-      </ion-card>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="calendar" slot="end"></ion-icon>
+        <ion-datetime [(ngModel)]="now" (ionChange)="tampilkan()"
+          display-format="DD" pickerFormat="DD MMM YYYY" [placeholder]="tanggal"
+          style="font-size:15px;padding:0;margin:2px -5px 0;font-weight:bold;color:white"
+        ></ion-datetime>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
@@ -21,18 +22,18 @@
 <ion-content no-padding>
 
 <div *ngIf="dataAmbilan">
-  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'cs'; trackBy: addExpand">
+  <ion-card *ngFor="let ambilan of dataAmbilan | groupBy:'cs' | orderBy:'key'; trackBy: addExpand">
     <ion-item-divider color="tertiary" (click)="ambilan.expand=!ambilan.expand">
-      <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>ADMIN {{ ambilan.key }}</strong> - {{ ambilan.value.length }}pcs</span></ion-label>
-      <ion-note slot="end" class="pc">Rp.{{ hitung(ambilan.value) | number }}</ion-note>
+      <ion-icon style="font-size: 18px;" slot="start" name="cube"></ion-icon>
+      <ion-label><span class="eksp"><strong>{{ ambilan.key }}</strong> - <span style="color:var(--ion-color-success)">{{ hitung(ambilan.value).pcs | number }}</span>/{{ ambilan.value.length }}pcs</span></ion-label>
+      <ion-note slot="end" class="pc">Rp.{{ hitung(ambilan.value).total | number }}</ion-note>
     </ion-item-divider>
     <ion-list *ngIf="ambilan.expand" class="ion-no-padding">
         <ion-item-sliding *ngFor="let data of ambilan.value | orderBy:'barang'">
           <ion-item [color]="data.status=='diambil'?'success':(data.status=='kosong'?'danger':(data.status=='fullkeep'?'warning':'light'))">
             <ion-label>
-              <ion-note>{{ data.penerima }} <strong>({{ data.cs }})</strong></ion-note>
-              <ion-card-title>
+              <ion-note style="font-size: 12px;color: #383838">{{ data.penerima }} <strong>({{ data.cs }})</strong></ion-note>
+              <ion-card-title style="font-size: 17px;">
               {{ data.barang }} {{ data.warna }}
               </ion-card-title>
             </ion-label>
@@ -55,9 +56,11 @@
 
 <ion-footer>
   <ion-toolbar color="tertiary" *ngIf="dataAmbilan">
-    <ion-title>Total Ambilan {{tanggal}} :</ion-title>
+    <ion-chip slot="start">
+      <ion-label color="light">Total | {{ dataAmbilan.length }}pcs</ion-label>
+    </ion-chip>
     <ion-chip slot="end">
-      <ion-label color="light">{{ dataAmbilan.length }}pcs</ion-label>
+      <ion-label color="success">{{ hitung(dataAmbilan).total | number }} | {{ hitung(dataAmbilan).pcs }}pcs</ion-label>
     </ion-chip>
   </ion-toolbar>
 </ion-footer>

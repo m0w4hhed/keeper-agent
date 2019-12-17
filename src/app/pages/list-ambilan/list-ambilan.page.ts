@@ -19,7 +19,7 @@ export class ListAmbilanPage implements OnInit {
     private dataService: DataService,
     private popup: PopupService,
   ) {
-    this.tanggal = this.dataService.getTime('DD/MM YYYY');
+    this.tanggal = this.dataService.getTime('DD');
     this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD')).subscribe(res => {
       this.onload = false;
       this.dataAmbilan = res;
@@ -34,7 +34,7 @@ export class ListAmbilanPage implements OnInit {
       this.onload = true;
       this.task.unsubscribe();
       const tgl = moment(this.now).format('YYYYMMDD');
-      this.tanggal = moment(this.now).format('DD/MM YYYY');
+      this.tanggal = moment(this.now).format('DD');
       this.task = this.dataService.getAmbilan(tgl).subscribe(res => {
         this.onload = false;
         this.dataAmbilan = res;
@@ -44,14 +44,16 @@ export class ListAmbilanPage implements OnInit {
     }
   }
 
-  hitung(barangToko: Ambilan[]): number {
+  hitung(barangToko: Ambilan[]) {
     let total = 0;
+    let pcs = 0;
     barangToko.forEach(barang => {
       if (barang.status === 'diambil') {
         total += barang.hargaBeli;
+        pcs++;
       }
     });
-    return total;
+    return { total, pcs };
   }
   addExpand(index: number, obj) {
     return { ...obj, expand: false };

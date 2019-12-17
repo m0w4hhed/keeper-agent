@@ -71,11 +71,12 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
+  <ion-toolbar color="tertiary">
       <ion-card>
           <ion-item-divider color="tertiary">
-            <ion-datetime class="eksp" slot="start" [(ngModel)]="now"  display-format="DD MMM YYYY" placeholder="Pilih Tanggal"></ion-datetime>
-            <ion-button color="light" slot="end" expand="full" fill="clear" (click)="tampilkan()">Tampilkan</ion-button>
+            <ion-datetime class="eksp" [(ngModel)]="now"  display-format="DD MMMM YYYY"
+              placeholder="Pilih Tanggal" (ionChange)="tampilkan()" style="margin: 0 auto"
+            ></ion-datetime>
           </ion-item-divider>
       </ion-card>
   </ion-toolbar>
