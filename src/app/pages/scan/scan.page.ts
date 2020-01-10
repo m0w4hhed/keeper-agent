@@ -32,7 +32,7 @@ export class ScanPage {
     private alertController: AlertController,
     ) {
     // this.encodedData = 'https://www.FreakyJolly.com';
-    this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD'));
+    this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD').toString());
     this.task = this.closingData.subscribe(() => this.onLoad = false);
   }
 

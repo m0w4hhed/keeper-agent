@@ -51,7 +51,7 @@ export class DataService {
     private popup: PopupService,
     ) {
     this.mutasiFilter$ = new BehaviorSubject(null);
-    this.closing$ = db.collection('closing').snapshotChanges().pipe(
+    this.closing$ = db.collection<Closing>('closing').snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
@@ -63,8 +63,12 @@ export class DataService {
     );
   }
 
-  getTime(format: string) {
-    return moment(moment().toDate().getTime()).format(format);
+  getTime(format?: string) {
+    if (format) {
+      return moment().format(format);
+    } else {
+      return moment().unix();
+    }
   }
 
   getDatas(stat: string | null) {
@@ -80,7 +84,7 @@ export class DataService {
         }).snapshotChanges().pipe(
           map(actions => {
             return actions.map(a => {
-              const data = a.payload.doc.data();
+              const data = a.payload.doc.data() as Closing;
               const id = a.payload.doc.id;
               const date = moment.unix(parseInt(id.split('-')[0], 10) / 1000).format('YYYY-MM-DD');
               // tslint:disable-next-line: no-string-literal

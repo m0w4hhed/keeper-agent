@@ -6,12 +6,12 @@
     <ion-title>
       <strong>LIST</strong> AMBILAN
     </ion-title>
+    <ion-icon name="calendar" slot="end" style="margin: 0;font-size: 20px;"></ion-icon>
     <ion-buttons slot="end">
       <ion-button>
-        <ion-icon name="calendar" slot="end"></ion-icon>
         <ion-datetime [(ngModel)]="now" (ionChange)="tampilkan()"
           display-format="DD" pickerFormat="DD MMM YYYY" [placeholder]="tanggal"
-          style="font-size:15px;padding:0;margin:2px -5px 0;font-weight:bold;color:white"
+          style="font-size:18px;padding:0;margin:2px -5px 0;font-weight:bold;color:white"
         ></ion-datetime>
       </ion-button>
     </ion-buttons>

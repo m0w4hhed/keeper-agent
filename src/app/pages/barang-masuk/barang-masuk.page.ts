@@ -28,7 +28,7 @@ export class BarangMasukPage {
     private alertController: AlertController,
     ) {
     this.tanggal = this.dataService.getTime('DD');
-    this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD')).subscribe(res => {
+    this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD').toString()).subscribe(res => {
       this.onload = false;
       this.dataAmbilan = res;
     });
