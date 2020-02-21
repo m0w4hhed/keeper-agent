@@ -2,12 +2,24 @@ import { Injectable } from '@angular/core';
 
 import { map, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { PopupService } from './popup.service';
 import * as firebase from 'firebase';
+import { Invoice, Ambilan } from './interfaces';
+import { WhereFilterOp } from '@firebase/firestore-types';
 
-export interface Closing {
+/**
+ * @param field nama field dari document
+ * @param comp comparator string firestore
+ * @param value value dari field
+ */
+export interface AmbilanFilter {
+  field: string;
+  comp: WhereFilterOp;
+  value: string|number|boolean;
+}
+export interface C {
   id: string;
   date: string;
   penerima: string;
@@ -24,7 +36,7 @@ export interface Closing {
   status: string;
   switch: boolean;
 }
-export interface Ambilan {
+export interface A {
   id: string;
   barang: string;
   barcode: string;
@@ -43,21 +55,20 @@ export interface Ambilan {
 })
 export class DataService {
 
-  closing$: Observable<any>;
-  mutasiFilter$: BehaviorSubject<string|null>;
+  invoice$: Observable<Invoice[]>;
+  invoiceFilter$: BehaviorSubject<string|null>;
 
   constructor(
     public db: AngularFirestore,
     private popup: PopupService,
     ) {
-    this.mutasiFilter$ = new BehaviorSubject(null);
-    this.closing$ = db.collection<Closing>('closing').snapshotChanges().pipe(
+    this.invoiceFilter$ = new BehaviorSubject(null);
+    this.invoice$ = db.collection<Invoice>('keep').snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
-          const date = moment.unix(parseInt(id.split('-')[0], 10) / 1000).format('YYYY-MM-DD');
-          return { id, date, ...data };
+          return { id, ...data };
         });
       })
     );
@@ -72,19 +83,19 @@ export class DataService {
   }
 
   getDatas(stat: string | null) {
-    this.mutasiFilter$.next(stat);
-    this.closing$ = combineLatest([
-      this.mutasiFilter$
+    this.invoiceFilter$.next(stat);
+    this.invoice$ = combineLatest([
+      this.invoiceFilter$
       ]).pipe(
       switchMap(([status]) =>
-        this.db.collection('closing', ref => {
+        this.db.collection('keep', ref => {
           let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
-          if (status) { query = query.where('tglDikirim', '==', status); }
+          if (status) { query = query.where('tglDiprint', '==', status); }
           return query;
         }).snapshotChanges().pipe(
           map(actions => {
             return actions.map(a => {
-              const data = a.payload.doc.data() as Closing;
+              const data = a.payload.doc.data() as Invoice;
               const id = a.payload.doc.id;
               const date = moment.unix(parseInt(id.split('-')[0], 10) / 1000).format('YYYY-MM-DD');
               // tslint:disable-next-line: no-string-literal
@@ -95,7 +106,7 @@ export class DataService {
         )
       )
     );
-    return this.closing$;
+    return this.invoice$;
   }
 
   async analyticValidator() {
@@ -124,7 +135,7 @@ export class DataService {
   async updateDikirim(id: string, data) {
     try {
       const batch = this.db.firestore.batch();
-      const barangRef = this.db.collection('closing').doc(id).ref;
+      const barangRef = this.db.collection('keep').doc(id).ref;
       const barangDoc = await barangRef.get();
       if (barangDoc.exists) {
         if (barangDoc.data().status !== 'Dikirim') {
@@ -159,28 +170,42 @@ export class DataService {
   }
   async updateResi(id: string, data: any) {
     try {
-      return await this.db.collection('closing').doc(id).update(data);
+      return await this.db.collection('keep').doc(id).update(data);
     } catch (err) {
       throw err;
     }
   }
 
-  getAmbilan(YYYYMMDD: string): Observable<Ambilan[]> {
-    return this.db.collection<Ambilan>('orderan', ref =>
-      ref.where('date', '==', YYYYMMDD)
-    ).snapshotChanges().pipe(
+  getAmbilan(filter: AmbilanFilter[], searchMode?: boolean|null, rangeDate?: {from: number, to: number}|null): Observable<Ambilan[]> {
+    return this.db.collection('ambilan', ref => {
+      let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+      if (searchMode) {
+        console.log(`[FTR] Search value ${filter[0].value}`);
+        const start = filter[0].value.toString().toLowerCase();
+        const end = start + '\uf8ff';
+        query = query.limit(10).orderBy(filter[0].field).startAt(start).endAt(end);
+      } else {
+        if (rangeDate) {
+          query = query.orderBy('waktuDicek').startAt(rangeDate.from).endAt(rangeDate.to);
+        }
+        filter.forEach(f => {
+          query = query.where(f.field, f.comp, f.value);
+        });
+      }
+      return query;
+    }).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return { id, ...data };
+          const data = a.payload.doc.data() as Ambilan;
+          const barcode = a.payload.doc.id;
+          return { barcode, ...data };
         });
       })
     );
   }
   async updateAmbilan(id: string, data: any) {
     try {
-      return this.db.collection('orderan').doc(id).update(data);
+      return this.db.collection('ambilan').doc(id).update(data);
     } catch (err) { throw err; }
   }
 }

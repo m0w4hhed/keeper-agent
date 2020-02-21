@@ -1,62 +1,69 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService, Ambilan } from 'src/app/services/data.service';
+import { DataService } from 'src/app/services/data.service';
 import * as moment from 'moment';
 import { PopupService } from 'src/app/services/popup.service';
+import { Ambilan } from 'src/app/services/interfaces';
+import { ToolService } from 'src/app/services/tool.service';
+import { PdfService } from 'src/app/services/pdf.service';
 
 @Component({
   selector: 'app-list-ambilan',
   templateUrl: './list-ambilan.page.html',
-  styleUrls: ['./list-ambilan.page.scss'],
+  styleUrls: ['./list-ambilan.page.scss']
 })
 export class ListAmbilanPage implements OnInit {
 
-  dataAmbilan: Ambilan[]; task;
+  dataPrint: Ambilan[]; task;
+  selectedPrint: Ambilan[] = [];
   onload = true;
-
-  now; tanggal;
+  onPrint = false;
 
   constructor(
     private dataService: DataService,
     private popup: PopupService,
+    public tool: ToolService,
+    private pdf: PdfService,
   ) {
-    this.tanggal = this.dataService.getTime('DD');
-    this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD').toString()).subscribe(res => {
+    this.task = this.dataService.getAmbilan([{field: 'printed', comp: '==', value: false}])
+    .subscribe(res => {
       this.onload = false;
-      this.dataAmbilan = res;
+      this.dataPrint = res;
+      this.selectedPrint = this.updateChecked(res);
     });
   }
-
   ngOnInit() {
   }
 
-  tampilkan() {
-    if (this.now) {
-      this.onload = true;
-      this.task.unsubscribe();
-      const tgl = moment(this.now).format('YYYYMMDD');
-      this.tanggal = moment(this.now).format('DD');
-      this.task = this.dataService.getAmbilan(tgl).subscribe(res => {
-        this.onload = false;
-        this.dataAmbilan = res;
-      });
-    } else {
-      this.popup.showToast('Pilih Tanggal Dulu', 1000);
-    }
+  print() {
+    this.pdf.printPDFLabel(this.selectedPrint, 'Ambilan', {statusPrint: 'ambilan'});
   }
 
-  hitung(barangToko: Ambilan[]) {
-    let total = 0;
-    let pcs = 0;
-    barangToko.forEach(barang => {
-      if (barang.status === 'diambil') {
-        total += barang.hargaBeli;
-        pcs++;
-      }
-    });
-    return { total, pcs };
+  selectAll(all: boolean) {
+    this.selectedPrint = [];
+    if (all) {
+      this.dataPrint.forEach(x => {
+        this.selectedPrint.push(x);
+      });
+    }
   }
-  addExpand(index: number, obj) {
-    return { ...obj, expand: false };
+  selectPrint(event, data: Ambilan) {
+   if (event.target.checked === true) {
+      if (!this.selectedPrint.includes(data)) {
+        this.selectedPrint.push(data);
+      }
+    } else {
+      const newArray = this.selectedPrint.filter((el) => {
+        return el.barcode !== data.barcode;
+      });
+      this.selectedPrint = newArray;
+   }
+  }
+  isSelected(data: Ambilan) {
+    return this.selectedPrint.map(x => x.barcode).includes(data.barcode);
+  }
+  updateChecked(res: Ambilan[]) {
+    const filter = this.selectedPrint.filter(x => res.map(brg => brg.barcode).includes(x.barcode));
+    return filter;
   }
 
 }

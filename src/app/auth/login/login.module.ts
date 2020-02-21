@@ -4,15 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-import { NgPipesModule } from 'ngx-pipes';
 
-import { ListAmbilanPage } from './list-ambilan.page';
-import { NgPluckPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
+import { LoginPage } from './login.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ListAmbilanPage
+    component: LoginPage
   }
 ];
 
@@ -21,9 +19,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    NgPipesModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [ListAmbilanPage]
+  declarations: [LoginPage]
 })
-export class ListAmbilanPageModule {}
+export class LoginPageModule {}

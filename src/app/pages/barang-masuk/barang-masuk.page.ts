@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
-import { DataService, Ambilan } from '../../services/data.service';
+import { DataService } from '../../services/data.service';
 import { PopupService } from '../../services/popup.service';
 
 import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { AlertController } from '@ionic/angular';
+import { Ambilan } from 'src/app/services/interfaces';
 
 @Component({
   selector: 'app-barang-masuk',
@@ -28,7 +29,7 @@ export class BarangMasukPage {
     private alertController: AlertController,
     ) {
     this.tanggal = this.dataService.getTime('DD');
-    this.task = this.dataService.getAmbilan(this.dataService.getTime('YYYYMMDD').toString()).subscribe(res => {
+    this.task = this.dataService.getAmbilan([]).subscribe(res => {
       this.onload = false;
       this.dataAmbilan = res;
     });
@@ -43,7 +44,7 @@ export class BarangMasukPage {
       this.task.unsubscribe();
       const tgl = moment(this.now).format('YYYYMMDD');
       this.tanggal = moment(this.now).format('DD');
-      this.task = this.dataService.getAmbilan(tgl).subscribe(res => {
+      this.task = this.dataService.getAmbilan([]).subscribe(res => {
         this.onload = false;
         this.dataAmbilan = res;
       });
@@ -86,11 +87,10 @@ export class BarangMasukPage {
   }
 
   barangDiambil(barcode: string) {
-    if (barcode && barcode.length === 18) {
+    if (barcode && barcode.length === 17) {
       const now = moment().toDate().getTime();
       this.dataService.updateAmbilan(barcode, {
-        status: 'diambil',
-        tglScan: this.dataService.getTime('YYYYMMDD'),
+        statusKeep: 'diambil',
         wktScan: now
       }).then(
         () => this.popup.showToast('Barang Diambil!', 1000),
@@ -101,11 +101,10 @@ export class BarangMasukPage {
     }
   }
 
-  gantiStatus(barang: Ambilan, status: string) {
+  gantiStatus(barang: Ambilan, statusKeep: string) {
     const now = moment().toDate().getTime();
-    this.dataService.updateAmbilan(barang.id, {
-      status,
-      tglScan: this.dataService.getTime('YYYYMMDD'),
+    this.dataService.updateAmbilan(barang.barcode, {
+      statusKeep,
       wktScan: now
     }).then(
       () => this.popup.showToast(`Barang ${status}!`, 1000),
@@ -116,7 +115,7 @@ export class BarangMasukPage {
   hitungDiambil(barangToko: Ambilan[]): number {
     let total = 0;
     barangToko.forEach(barang => {
-      if (barang.status === 'diambil') {
+      if (barang.statusKeep === 'diambil') {
         total += barang.hargaBeli;
       }
     });

@@ -9,27 +9,32 @@ import { environment } from '../environments/environment';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UpdateResiPageModule } from 'src/app/pages/resi/update-resi/update-resi.module';
 import { BarangMasukPageModule } from 'src/app/pages/barang-masuk/barang-masuk.module';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
+    AngularFireAuthModule,
     BrowserAnimationsModule,
     // Page Modules
     UpdateResiPageModule,
@@ -38,6 +43,8 @@ import { BarangMasukPageModule } from 'src/app/pages/barang-masuk/barang-masuk.m
   providers: [
     StatusBar,
     SplashScreen,
+    File,
+    FileOpener,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     BarcodeScanner
   ],
