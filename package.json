@@ -1,13 +1,13 @@
 {
-  "name": "com.nabiilah.scan",
+  "name": "com.keeper.agent",
   "version": "1.1.4",
-  "author": "NabiilahStore",
-  "homepage": "https://nabiilahstore.com/",
+  "author": "Keeper Agent",
+  "homepage": "https://keeper.com/",
   "scripts": {
     "ng": "ng",
     "start": "ionic serve --devapp",
     "device": "ionic cordova run android --device",
-    "build": "ionic cordova resources android && ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\nabilah-scan.apk && jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ..\\nabiilahapp.keystore ..\\nabilah-scan.apk nabiilahapp && zipalign -v 4 ..\\nabilah-scan.apk ..\\nabilah-scan-aligned.apk",
+    "build": "ionic cordova resources android && ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\keeper-agent.apk && jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ..\\mi-apps.keystore ..\\keeper-agent.apk mi-apps && zipalign -v 4 ..\\keeper-agent.apk ..\\keeper-agent-aligned.apk",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -94,9 +94,7 @@
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-plugin-ionic-keyboard": {},
-      "phonegap-plugin-barcodescanner": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
+      "phonegap-plugin-barcodescanner": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
