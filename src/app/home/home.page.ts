@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { DataService } from '../services/data.service';
+import { PopupService } from '../services/popup.service';
+import { ToolService } from '../services/tool.service';
+import { Pesanan } from '../services/interfaces';
 
 @Component({
   selector: 'app-home',
@@ -8,12 +12,30 @@ import { UserService } from '../services/user.service';
 })
 export class HomePage {
 
+  dataPrint; task;
+  appVersion;
+
   constructor(
     public userService: UserService,
-  ) {}
+    private dataService: DataService,
+    private tool: ToolService,
+    private popup: PopupService,
+  ) {
+    this.tool.getAppVersion().then(
+      (ver) => this.appVersion = ver
+    );
+    this.task = this.dataService.getDatas<Pesanan>('ambilan', [{field: 'printed', comp: '==', value: false}])
+    .subscribe(res => {
+      this.dataPrint = res;
+    });
+  }
 
   logout() {
-    this.userService.logout();
+    this.popup.showAlertConfirm('Keluar', 'Yakin Ingin Log-Out?').then(
+      (iya) => {
+        if (iya) { this.userService.logout(); }
+      }
+    );
   }
 
 }

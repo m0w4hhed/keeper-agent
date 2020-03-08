@@ -1,13 +1,16 @@
 ## Instalasi Plugin Ionic
-- install plugin dan package:
-```
-npm install @angular/fire @ionic-native/barcode-scanner moment angular-pipes phonegap-plugin-barcodescanner firebase @ionic-native/file-opener @ionic-native/file --save
-```
 - install cordova plugin:
 ```
 ionic cordova plugin add cordova-plugin-file
 ionic cordova plugin add phonegap-plugin-barcodescanner
 ionic cordova plugin add cordova-plugin-file-opener2
+ionic cordova plugin add cordova-plugin-android-permissions
+ionic cordova plugin add cordova-plugin-printer
+ionic cordova plugin add cordova-plugin-app-version
+```
+- install plugin dan package:
+```
+npm i --save @angular/fire @ionic-native/barcode-scanner moment angular-pipes phonegap-plugin-barcodescanner firebase @ionic-native/file-opener @ionic-native/file @ionic-native/android-permissions @ionic-native/printer @ionic-native/app-version
 ```
 
 ## Update changes:
@@ -29,3 +32,8 @@ ionic cordova plugin add cordova-plugin-file-opener2
 ### v1.1.3:
 - add date picker on Barang Masuk & List Ambilan
 - add IonChange on datePicker
+
+### v1.2.0:
+- Add Print Ambilan feature
+- Database Migration
+- Access Filtering

@@ -7,7 +7,9 @@ import { PopupService } from '../../services/popup.service';
 import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { AlertController } from '@ionic/angular';
-import { Ambilan } from 'src/app/services/interfaces';
+import { ToolService } from 'src/app/services/tool.service';
+import { Observable } from 'rxjs';
+import { Pesanan } from 'src/app/services/interfaces';
 
 @Component({
   selector: 'app-barang-masuk',
@@ -16,8 +18,9 @@ import { Ambilan } from 'src/app/services/interfaces';
 })
 export class BarangMasukPage {
 
-  dataAmbilan: Ambilan[]; task;
-  onload = true;
+  dataAmbilan: Pesanan[]; task;
+  onload = true; onrekap = false;
+  olahdataExist: Observable<boolean>;
 
   now; tanggal;
 
@@ -27,32 +30,67 @@ export class BarangMasukPage {
     private dataService: DataService,
     private popup: PopupService,
     private alertController: AlertController,
+    public tool: ToolService,
     ) {
     this.tanggal = this.dataService.getTime('DD');
-    this.task = this.dataService.getAmbilan([]).subscribe(res => {
+    const {startTime, endTime} = this.tool.getRangeTime(this.tool.getTime());
+    // console.log(startTime, endTime);
+    this.task = this.dataService.getDatas<Pesanan>(
+      'ambilan',
+      [{field: 'printed', comp: '==', value: true}],
+      false, {from: startTime, to: endTime}
+    ).subscribe(res => {
       this.onload = false;
       this.dataAmbilan = res;
+      // console.log(res);
     });
+    this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'masuk');
   }
 
-  test() {
-    console.log(this.now);
-  }
   tampilkan() {
     if (this.now) {
       this.onload = true;
       this.task.unsubscribe();
-      const tgl = moment(this.now).format('YYYYMMDD');
+      const {startTime, endTime} = this.tool.getRangeTime(moment(this.now).unix());
+      // console.log(startTime, endTime);
       this.tanggal = moment(this.now).format('DD');
-      this.task = this.dataService.getAmbilan([]).subscribe(res => {
+      this.task = this.dataService.getDatas<Pesanan>(
+        'ambilan',
+        [{field: 'printed', comp: '==', value: true}],
+        false, {from: startTime, to: endTime}
+      ).subscribe(res => {
         this.onload = false;
         this.dataAmbilan = res;
       });
+      this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'masuk');
     } else {
       this.popup.showToast('Pilih Tanggal Dulu', 1000);
     }
   }
 
+  rekap() {
+    const tanggal = moment(this.now).format('YYYYMMDD');
+    this.onrekap = true;
+    const belumStatus = this.dataAmbilan.filter(barang => barang.statusKeep === 'keep');
+    this.popup.showAlertConfirm('REKAP', 'Semua status barang dari <b>keep</b> akan menjadi <b>kosong</>, lanjut rekapan?').then(
+      (yes) => {
+        if (yes) {
+          try {
+            this.dataService.updateAllAmbilan(belumStatus, {
+              statusKeep: 'kosong',
+              wktScan: this.tool.getTime()
+            }).then(() => this.onrekap = false);
+            this.dataService.olahData(this.dataAmbilan, 'masuk', tanggal).then(
+              () => {this.onrekap = false; this.popup.showToast('Rekap berhasil!', 1000); }
+            );
+          } catch (err) {
+            this.onrekap = false;
+            this.popup.showAlert('ERROR UPDATE', err);
+          }
+        }
+      }
+    );
+  }
   scanMassal() {
     this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
       this.barangDiambil(barcodeData.text);
@@ -61,37 +99,12 @@ export class BarangMasukPage {
       this.popup.showAlert('Error Camera: ', err);
     });
   }
-  async scanManual() {
-    const alert = await this.alertController.create({
-      header: 'Scan Manual',
-      mode: 'ios',
-      inputs: [{
-        name: 'id', type: 'text',
-        placeholder: 'Masukkan Barcode barang disini',
-        min: 16, max: 16
-        },
-      ],
-      buttons: [{
-        text: 'Cancel',
-        role: 'cancel',
-        handler: () => { }
-      }, {
-        text: 'Masuk!',
-        cssClass: 'tertiary',
-        handler: (data) => {
-          this.barangDiambil(data.id);
-        }
-      }]
-    });
-    await alert.present();
-  }
 
   barangDiambil(barcode: string) {
     if (barcode && barcode.length === 17) {
-      const now = moment().toDate().getTime();
       this.dataService.updateAmbilan(barcode, {
         statusKeep: 'diambil',
-        wktScan: now
+        wktScan: this.tool.getTime()
       }).then(
         () => this.popup.showToast('Barang Diambil!', 1000),
         (err) => this.popup.showAlert('Barcode Salah!', err)
@@ -100,29 +113,32 @@ export class BarangMasukPage {
       this.popup.showAlert('Barcode Error!', 'Barcode terlalu panjang / pendek');
     }
   }
-
-  gantiStatus(barang: Ambilan, statusKeep: string) {
-    const now = moment().toDate().getTime();
-    this.dataService.updateAmbilan(barang.barcode, {
+  gantiStatus(barang: Pesanan, statusKeep: string) {
+    const data = {
       statusKeep,
-      wktScan: now
-    }).then(
-      () => this.popup.showToast(`Barang ${status}!`, 1000),
+      wktScan: this.tool.getTime(),
+      printed: true
+    };
+    // if (statusKeep === 'fullkeep') { data.printed = false; }
+    this.dataService.updateAmbilan(barang.barcode, data).then(
+      () => this.popup.showToast(`Barang ${statusKeep}!`, 1000),
       (err) => this.popup.showAlert('Barcode Salah!', err)
     );
   }
 
-  hitungDiambil(barangToko: Ambilan[]): number {
+  hitungDiambil(barangToko: Pesanan[]): {total: number, jumlah: number} {
     let total = 0;
+    let jumlah = 0;
     barangToko.forEach(barang => {
       if (barang.statusKeep === 'diambil') {
         total += barang.hargaBeli;
+        jumlah++;
       }
     });
-    return total;
+    return {total, jumlah};
   }
   addExpand(index: number, obj) {
-    return { ...obj, expand: false };
+    return { ...obj, expand: true };
   }
 
   onDestroy() {

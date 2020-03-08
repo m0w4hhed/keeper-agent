@@ -4,21 +4,21 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <ion-chip color="light">
+      <ion-chip color="light" (click)="openPrintAmbilan()">
         <ion-icon name="archive" color="light"></ion-icon>
-        <ion-label><strong>LIST</strong> AMBILAN&nbsp;{{ dataPrint?.length }}pc</ion-label>
+        <ion-label>LIST AMBILAN&nbsp;</ion-label>
       </ion-chip>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="print()">
-        <ion-icon name="print" slot="icon-only"></ion-icon>
+      <ion-button [disabled]="selectedPrint?.length===0 || onPrint" (click)="print()">
+        <ion-icon color="light" name="print" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
   <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
-<ion-content no-padding>
+<ion-content class="ion-no-padding">
 <div *ngIf="dataPrint">
   <ion-list class="ion-no-padding">
       <ion-item-sliding *ngFor="let data of dataPrint | orderBy:'dateKeep'">
@@ -29,7 +29,7 @@
             {{ tool.titleCase(data.barang) }} {{ tool.titleCase(data.warna) }}
             </ion-card-title>
           </ion-label>
-          <ion-toggle [value]="data" color="tertiary" mode="ios" [checked]="isSelected(data)" (ionChange)="$event ? selectPrint($event, data) : null"></ion-toggle>
+          <ion-toggle [disabled]="onPrint" [value]="data" color="tertiary" mode="ios" [checked]="isSelected(data)" (ionChange)="$event ? selectPrint($event, data) : null"></ion-toggle>
         </ion-item>
       </ion-item-sliding>
   </ion-list>
@@ -51,6 +51,10 @@
       <ion-icon name="wallet" color="light"></ion-icon>
       <ion-label>Rp. {{ dataPrint | pluck:'hargaBeli' | sum | number }}</ion-label>
     </ion-chip>
-    <ion-toggle style="padding-right: 17px;" *ngIf="dataPrint" color="light" mode="ios" slot="end" (ionChange)="$event ? selectAll($event.target.checked) : null"></ion-toggle>
+    <ion-chip color="light" slot="start">
+      <ion-icon name="archive" color="light"></ion-icon>
+      <ion-label><span [class]="selectPrint?.length>500?'awas':'aman'">{{selectedPrint?.length}}</span>/{{ dataPrint?.length }} pcs</ion-label>
+    </ion-chip>
+    <ion-toggle [disabled]="onPrint" style="padding-right: 17px;" *ngIf="dataPrint" color="light" mode="ios" slot="end" (ionChange)="$event ? selectAll($event.target.checked) : null"></ion-toggle>
   </ion-toolbar>
 </ion-footer>

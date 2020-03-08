@@ -8,6 +8,8 @@ import { PopupService } from '../../services/popup.service';
 import * as moment from 'moment';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { AlertController } from '@ionic/angular';
+import { ToolService } from 'src/app/services/tool.service';
+import { Invoice } from 'src/app/services/interfaces';
 
 @Component({
   selector: 'app-scan',
@@ -17,12 +19,15 @@ import { AlertController } from '@ionic/angular';
 export class ScanPage {
 
   task;
-  onLoad = true;
+  onload = true;
 
   encodedData: any;
   scannedData: string;
 
-  closingData: Observable<any>;
+  closingData: Invoice[];
+  olahdataExist: Observable<boolean>;
+
+  now; tanggal;
 
   constructor(
     private barcodeScanner: BarcodeScanner,
@@ -30,20 +35,43 @@ export class ScanPage {
     private dataService: DataService,
     private popupService: PopupService,
     private alertController: AlertController,
+    private tool: ToolService,
     ) {
-    // this.encodedData = 'https://www.FreakyJolly.com';
-    this.closingData = this.dataService.getDatas(this.dataService.getTime('YYYYMMDD').toString());
-    this.task = this.closingData.subscribe(() => this.onLoad = false);
+    this.tanggal = this.dataService.getTime('DD');
+    const {startTime, endTime} = this.tool.getRangeTime(this.tool.getTime());
+    this.task = this.dataService.getDatas<Invoice>(
+      'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+      false, {from: startTime, to: endTime}
+    ).subscribe(res => {
+      this.onload = false;
+      this.closingData = res;
+    });
+    this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'keluar');
+  }
+
+  tampilkan() {
+    this.onload = true;
+    this.task.unsubscribe();
+    const {startTime, endTime} = this.tool.getRangeTime(moment(this.now).unix());
+    // console.log(startTime, endTime);
+    this.tanggal = moment(this.now).format('DD');
+    this.task = this.dataService.getDatas<Invoice>(
+      'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+      false, {from: startTime, to: endTime}
+    ).subscribe(res => {
+      this.onload = false;
+      this.closingData = res;
+    });
+    this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'keluar');
   }
 
   scanMassal() {
     this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
-      if (barcodeData.text && barcodeData.text.length === 16) {
-        const now = moment().toDate().getTime();
-        this.dataService.updateDikirim(barcodeData.text, {
-          status: 'Dikirim',
-          tglDikirim: this.dataService.getTime('YYYYMMDD'),
-          wktDikirim: now
+      if (barcodeData.text && barcodeData.text.length === 12) {
+        const now = this.tool.getTime();
+        this.dataService.updateInvoice(barcodeData.text, {
+          status: 'dikirim',
+          waktuDikirim: now
         });
       }
     })
@@ -69,12 +97,12 @@ export class ScanPage {
         text: 'Kirim!',
         cssClass: 'tertiary',
         handler: (data) => {
-          if (data.id && data.id.length === 16) {
+          data.id = data.id.trim();
+          if (data.id && data.id.length === 12) {
             const now = moment().toDate().getTime();
-            this.dataService.updateDikirim(data.id, {
-              status: 'Dikirim',
-              tglDikirim: this.dataService.getTime('YYYYMMDD'),
-              wktDikirim: now
+            this.dataService.updateInvoice(data.id, {
+              status: 'dikirim',
+              waktuDikirim: this.tool.getTime(),
             });
           } else {
             this.popupService.showAlert('Salah!', 'Barcode Salah Tulis Bro!');
@@ -85,22 +113,18 @@ export class ScanPage {
     });
     await alert.present();
   }
-
-  /*
-  encodedText() {
-    this.barcodeScanner
-      .encode(this.barcodeScanner.Encode.TEXT_TYPE, this.encodedData)
-      .then(
-        encodedData => {
-          console.log(encodedData);
-          this.encodedData = encodedData;
-        },
-        err => {
-          console.log('Error occured : ' + err);
+  rekap() {
+    this.popupService.showAlertConfirm('REKAP', 'Apakah semua data barang keluar sudah valid?').then(
+      (yes) => {
+        if (yes) {
+          this.dataService.olahData(this.closingData, 'keluar', moment(this.now).format('YYYYMMDD')).then(
+            () => this.popupService.showToast('Berhasil rekapan!', 1000),
+            (err) => this.popupService.showAlert('ERROR REKAP', err)
+          );
         }
-      );
+      }
+    );
   }
-  */
 
   onDestroy() {
     this.task.unsubscribe();

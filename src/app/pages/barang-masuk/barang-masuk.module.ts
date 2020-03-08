@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { BarangMasukPage } from './barang-masuk.page';
-import { NgPluckPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
+import { NgPipesModule } from 'ngx-pipes';
 
 const routes: Routes = [
   {
@@ -21,10 +21,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    NgPluckPipeModule,
-    NgFlattenPipeModule,
-    NgGroupByPipeModule,
-    NgOrderByPipeModule,
+    NgPipesModule
   ],
   declarations: [BarangMasukPage]
 })

@@ -10,30 +10,30 @@
   <ion-progress-bar color="tertiary" *ngIf="onLoad" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
-<ion-content no-padding>
+<ion-content class="ion-no-padding">
 
 <div *ngIf="closingData | async; let closingan">
-  <ion-card *ngFor="let items of closingan | groupBy: 'ekspedisi'">
-    <ion-item-divider color="tertiary">
+  <ion-list class="ion-no-padding" *ngFor="let items of closingan | groupBy: 'ekspedisi.kurir' | keyvalue">
+    <ion-item-divider sticky color="tertiary">
       <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ items.value | pluck: 'totalOngkir' | sum | number }} <br> Real:  {{ items.value | pluck: 'realOngkir' | sum | number }}</span></ion-label>
-      <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</span></ion-label>
+      <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ hitungOngkir(items.value) | number }} <br> Real:  {{ hitungOngkir(items.value, true) | number }}</span></ion-label>
+      <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'pesanan' | flatten).length }} pcs</span></ion-label>
     </ion-item-divider>
     <ion-item-sliding *ngFor="let item of items.value | orderBy: 'penerima'">
       <ion-item [color]="!item.resi ? 'warning' : 'light'" (click)="detailPaket(item)">
         <ion-label>
-          <ion-note><strong>{{ item.id }}</strong> | <span>{{ item.totalOngkir | number }} ({{ item.berat }}Kg)</span></ion-note>
+          <ion-note><strong>{{ item.id }}</strong> | <span>{{ hitung(item.berat, item.ekspedisi.ongkir) | number }} ({{ hitung(item.berat) }}Kg)</span></ion-note>
           <ion-card-title>
-          <strong>{{ item.cs }} - {{ item.penerima }}</strong>
+          <strong>{{ item.cs }} - {{ item.penerima.nama.toUpperCase() }}</strong>
           </ion-card-title>
           <ion-note *ngIf="item.resi"><strong>{{ item.resi }}</strong>
-            <span *ngIf="item.realOngkir && (item.realOngkir!==item.totalOngkir || item.realBerat!==item.berat)"
-                  [class]="(item.realOngkir>item.totalOngkir) ? 'kurang' : 'lebih'"> | {{ item.realOngkir | number }} ({{ item.realBerat }}Kg)</span>
+            <span *ngIf="item.realOngkir && (item.realOngkir!==hitung(item.berat, item.ekspedisi.ongkir) || item.realBerat!==hitung(item.berat))"
+                  [class]="(hitungOngkir(items.value, true)>hitungOngkir(items.value)) ? 'kurang' : 'lebih'"> | {{ item.realOngkir | number }} ({{ item.realBerat / 1000 }}Kg)</span>
           </ion-note>
         </ion-label>
         <ion-note slot="end">
           <ion-label color="tertiary">{{ item.status }}</ion-label>
-          <ion-label>{{ item.listBarang.length }}pcs </ion-label>
+          <ion-label>{{ item.pesanan.length }}pcs </ion-label>
         </ion-note>
       </ion-item>
       <ion-item-options side="end">
@@ -57,7 +57,7 @@
       </div>
       -->
     </ion-item-sliding>
-  </ion-card>
+  </ion-list>
 </div>
 
 <!--
@@ -75,7 +75,7 @@
       <ion-card>
           <ion-item-divider color="tertiary">
             <ion-datetime class="eksp" [(ngModel)]="now"  display-format="DD MMMM YYYY"
-              placeholder="Pilih Tanggal" (ionChange)="tampilkan()" style="margin: 0 auto"
+              placeholder="{{tanggal * 1000 | date:'dd MMMM yyyy'}}" (ionChange)="tampilkan()" style="margin: 0 auto"
             ></ion-datetime>
           </ion-item-divider>
       </ion-card>

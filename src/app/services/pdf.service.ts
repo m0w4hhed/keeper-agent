@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { NavController, Platform } from '@ionic/angular';
 
-import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { StorageService } from './storage.service';
+
+import * as moment from 'moment';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import * as moment from 'moment';
-import { NavController, Platform } from '@ionic/angular';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const options = [
@@ -33,13 +33,10 @@ const options = [
 export class PdfService {
 
   labelOptions = options[0];
-  pdfObj;
 
   constructor(
     public navCtrl: NavController,
-    private plt: Platform,
-    private file: File,
-    private fileOpener: FileOpener
+    private storage: StorageService,
     ) {}
 
   getOptions(index?: number | null) {
@@ -51,25 +48,21 @@ export class PdfService {
     this.labelOptions = options[index];
   }
 
-  generatePdf(data, pdfName?: string) {
-    this.pdfObj = pdfMake.createPdf(data);
-    if (this.plt.is('cordova')) {
-      this.pdfObj.getBuffer((buffer) => {
-        const blob = new Blob([buffer], { type: 'application/pdf' });
-        // Save the PDF to the data Directory of our App
-        this.file.writeFile(this.file.dataDirectory, pdfName, blob, { replace: true }).then(fileEntry => {
-          // Open the PDf with the correct OS tools
-          this.fileOpener.open(this.file.dataDirectory + pdfName, 'application/pdf');
-        });
-      });
-    } else {
-      // On a browser simply use download!
-      this.pdfObj.download(pdfName);
-    }
+  generatePdf(data, pdfName: string, printFile?: boolean): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const base64data = pdfMake.createPdf(data);
+      this.storage.writeFile(base64data, pdfName).then(
+        (fileDir) => {
+          if (printFile) { this.storage.printFile(fileDir); }
+          resolve(fileDir);
+        },
+        (err) => reject(JSON.stringify(err))
+      );
+    });
   }
 
   // PRINT PDF LABEL
-  printPDFLabel(data: any[], fileName: string, option: {statusPrint: string, labelMerk?: number}) {
+  createPDFLabel(data: any[], option: {statusPrint: string, labelMerk?: number}) {
     const printData = data;
     if (option.labelMerk) { this.setOptions(option.labelMerk); }
     printData.map(x => ({ ...x, null: false, statusPrint: option.statusPrint }));
@@ -168,8 +161,7 @@ export class PdfService {
       pageMargins: [ 3, 5, 1, 1 ],
       content
     };
-
-    this.generatePdf(pdfRaw, `${fileName}_${moment().format('YYYY-MM-DD')}`);
+    return this.generatePdf(pdfRaw, `${moment().format('YYYY-MM-DD')}_${moment().format('hh.mm')}_AMBILAN.pdf`);
   }
   split_refill(data: any[], splitLength: number, dataRefill?: any | null) {
     const dataResult = [];
@@ -197,7 +189,7 @@ export class PdfService {
   }
 
   // PRINT PDF NOTA
-  printPDFNota(orderan) {
+  createPDFNota(orderan) {
     const orderanGroup = [];
     for (const key in orderan) { // reorder data {LTS: value[]} => [ {key: 'LTS', value: []}, ... ]
       if (orderan.hasOwnProperty(key)) {
@@ -315,7 +307,7 @@ export class PdfService {
       },
       content: newBlock
     };
-    this.generatePdf(pdfRaw, `Nota_Ambilan_${moment().format('YYYY-MM-DD')}`);
+    return this.generatePdf(pdfRaw, `${moment().format('YYYY-MM-DD')}_${moment().format('hh.mm')}_NOTA.pdf`);
   }
   buatNota(blokNota) {
     const nota = [];

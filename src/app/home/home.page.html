@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="tertiary" mode="ios">
-    <ion-title *ngIf="userService.user | async as user">{{user.access[0].toUpperCase()}} {{user.nama.toUpperCase()}}</ion-title>
+    <ion-title *ngIf="userService.user | async as user">[{{user.access[0].toUpperCase()}}] {{user.nama.toUpperCase()}}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">
         <ion-icon name="log-out" slot="icon-only"></ion-icon>
@@ -11,10 +11,10 @@
 
 <ion-content fullscreen class="vertical-center" *ngIf="(userService.user | async) as user">
   <div>
-      <ion-grid>
+      <ion-grid *ngIf="dataPrint">
         <ion-row *ngIf="user.access.includes('gudang')">
           <ion-col size="6">
-              <ion-card class="center" routerLink="/scan">
+              <ion-card class="" routerLink="/scan">
                 <img src="../../assets/messenger.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Scan Barang Keluar</ion-card-subtitle>
@@ -23,7 +23,7 @@
               </ion-card>
           </ion-col>
           <ion-col size="6">
-              <ion-card class="center"  routerLink="/resi">
+              <ion-card class=""  routerLink="/resi">
                 <img src="../../assets/barcode-scanner.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Cari & Masukkan Resi</ion-card-subtitle>
@@ -34,7 +34,7 @@
         </ion-row>
         <ion-row *ngIf="user.access.includes('ambilan')">
           <ion-col>
-              <ion-card class="center" routerLink="/barang-masuk">
+              <ion-card class="" routerLink="/barang-masuk">
                 <img src="../../assets/cart.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Scan Barang Masuk</ion-card-subtitle>
@@ -43,7 +43,8 @@
               </ion-card>
           </ion-col>
           <ion-col>
-              <ion-card class="center" routerLink="/list-ambilan">
+              <ion-card [class]="dataPrint?.length>0?'danger':''" routerLink="/list-ambilan">
+                <ion-badge [color]="dataPrint?.length>0?'danger':'tertiary'" *ngIf="dataPrint">{{dataPrint?.length}}</ion-badge>
                 <img src="../../assets/package.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Daftar List Ambilan</ion-card-subtitle>
@@ -58,6 +59,6 @@
 
 <ion-footer>
   <ion-toolbar text-center color="tertiary" mode="ios">
-    <ion-text>NabiilahGudang v1.1.4</ion-text>
+    <ion-text>NabiilahGudang v{{appVersion}}</ion-text>
   </ion-toolbar>
 </ion-footer>

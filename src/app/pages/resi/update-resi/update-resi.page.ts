@@ -4,6 +4,8 @@ import { DataService } from 'src/app/services/data.service';
 import { PopupService } from 'src/app/services/popup.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { ScannerService } from 'src/app/services/scanner.service';
+import { Invoice } from 'src/app/services/interfaces';
+import { ToolService } from 'src/app/services/tool.service';
 
 @Component({
   selector: 'app-update-resi',
@@ -32,6 +34,7 @@ export class UpdateResiPage implements OnInit {
     private popup: PopupService,
     private barcodeScanner: BarcodeScanner,
     private scanner: ScannerService,
+    private tool: ToolService,
   ) {}
 
   updateResi(resi) {
@@ -56,7 +59,8 @@ export class UpdateResiPage implements OnInit {
     );
   }
   updateTgl(tgl) {
-    this.dataService.updateResi(this.data.id, {tglDikirim: tgl.trim()}).then(
+    const date = this.tool.formatTime(tgl);
+    this.dataService.updateResi(this.data.id, {waktuDikirim: date}).then(
       () => {
         this.editTgl = false;
         this.popup.showToast('Tanggal kirim berhasil diperbarui', 1000);
@@ -76,8 +80,23 @@ export class UpdateResiPage implements OnInit {
     });
   }
 
+  hitung(berat: number, ongkir?: number) {
+    let hasil = Math.ceil(berat / 1000);
+    if (ongkir) { hasil = hasil * ongkir; }
+    return hasil;
+  }
+  hitungOngkir(data: Invoice[], real?: boolean) {
+    let allOngkir = 0;
+    data.forEach(invoice => {
+      let ongkir = 0;
+      real ? ongkir = invoice.realOngkir : ongkir = this.hitung(invoice.berat, invoice.ekspedisi.ongkir);
+      allOngkir += ongkir;
+    });
+    return allOngkir;
+  }
+
   ngOnInit() {
-    this.inputTgl = this.data.tglDikirim;
+    this.inputTgl = this.data.waktuDikirim;
     this.inputOngkir = this.data.totalOngkir;
     this.inputBerat = this.data.berat;
     if (this.data.resi) {

@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { MaterialModule } from '../../modules/material.module';
 
 import { ResiPage } from './resi.page';
-import { NgPluckPipeModule, NgSumPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
+import { NgPipesModule } from 'ngx-pipes';
 
 const routes: Routes = [
   {
@@ -23,11 +23,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     MaterialModule,
-    NgPluckPipeModule,
-    NgSumPipeModule,
-    NgGroupByPipeModule,
-    NgOrderByPipeModule,
-    NgFlattenPipeModule,
+    NgPipesModule,
   ],
   declarations: [
     ResiPage,

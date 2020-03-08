@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { NgPipesModule } from 'ngx-pipes';
 
 import { ListAmbilanPage } from './list-ambilan.page';
-import { NgPluckPipeModule, NgGroupByPipeModule, NgOrderByPipeModule, NgFlattenPipeModule } from 'angular-pipes';
+import { GroupByPipe } from 'angular-pipes';
 
 const routes: Routes = [
   {
@@ -24,6 +24,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     NgPipesModule
   ],
+  providers: [GroupByPipe],
   declarations: [ListAmbilanPage]
 })
 export class ListAmbilanPageModule {}

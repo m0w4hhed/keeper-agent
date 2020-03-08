@@ -2,20 +2,23 @@
 </ion-header>
 
 <ion-content color="tertiary" >
-  <ion-card mode="ios" class="container" style="background-color: #1b0052;">
+  <ion-card color="light" mode="ios" class="container">
     <ion-card-header>
-      <ion-card-title style="text-align: center;color: #ede5ff;">
-        LOG IN CS
+      <ion-card-title style="text-align: center">
+        <ion-label color="tertiary">
+          <strong>MASUK</strong>
+          <p>Nabiilah Gudang</p>
+        </ion-label>
       </ion-card-title>
     </ion-card-header>
   
     <ion-card-content>
-      <ion-list style="border: 5px; border-color: #ede5ff;">
-        <ion-item style="--background: #ede5ff;">
+      <ion-list style="padding: 0;">
+        <ion-item  color="light">
           <ion-label color="tertiary" position="floating">Email</ion-label>
           <ion-input type="email" [(ngModel)]="email"></ion-input>
         </ion-item>
-        <ion-item style="--background: #ede5ff;">
+        <ion-item  color="light">
           <ion-label color="tertiary" position="floating">Password</ion-label>
           <ion-input [type]="showpass? 'text':'password'" [(ngModel)]="pass"></ion-input>
           <ion-buttons slot="end">
@@ -26,9 +29,9 @@
         </ion-item>
       </ion-list>
       <br>
-      <ion-button [disabled]="onlogin" (click)="login()" expand="block" style="margin:0; height: 40px; --background: #ede5ff;">
-        <ion-icon name="log-in" color="tertiary"></ion-icon>&nbsp;
-        <ion-label color="tertiary">MASUK</ion-label>
+      <ion-button color="tertiary" [disabled]="onlogin" (click)="login()" expand="block" style="margin:0; height: 40px;">
+        <ion-icon name="log-in"></ion-icon>&nbsp;
+        <ion-label>MASUK</ion-label>
       </ion-button>
     </ion-card-content>
   </ion-card>

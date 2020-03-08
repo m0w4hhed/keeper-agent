@@ -10,7 +10,8 @@ const routes: Routes = [
   { path: 'update-resi', loadChildren: './pages/resi/update-resi/update-resi.module#UpdateResiPageModule', canActivate: [UserService] },
   { path: 'barang-masuk', loadChildren: './pages/barang-masuk/barang-masuk.module#BarangMasukPageModule', canActivate: [UserService] },
   { path: 'list-ambilan', loadChildren: './pages/list-ambilan/list-ambilan.module#ListAmbilanPageModule', canActivate: [UserService] },
-  { path: 'login', loadChildren: './auth/login/login.module#LoginPageModule' },
+  { path: 'login', loadChildren: './auth/login/login.module#LoginPageModule' },  { path: 'print-ambilan', loadChildren: './pages/list-ambilan/print-ambilan/print-ambilan.module#PrintAmbilanPageModule' },
+
 
 
 ];

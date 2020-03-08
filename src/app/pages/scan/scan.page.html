@@ -4,41 +4,50 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <strong>NABIILAH</strong>STORE
+      <strong>BARANG</strong> KELUAR
     </ion-title>
+    <ion-icon name="calendar" slot="end" style="margin: 0;font-size: 20px;"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-datetime [(ngModel)]="now" (ionChange)="tampilkan()"
+          display-format="DD" pickerFormat="DD MMM YYYY" [placeholder]="tanggal"
+          style="font-size:18px;padding:0;margin:2px -5px 0;font-weight:bold;color:white"
+        ></ion-datetime>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <ion-progress-bar color="tertiary" *ngIf="onLoad" type="indeterminate"></ion-progress-bar>
+  <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
-<ion-content no-padding>
+<ion-content class="ion-no-padding">
 
-<div *ngIf="closingData | async; let closingan">
-  <ion-card *ngFor="let items of closingan | groupBy:'ekspedisi'">
-    <ion-item-divider color="tertiary">
+<div *ngIf="closingData as closingan">
+  <ion-list *ngFor="let items of closingan | groupBy:'ekspedisi.kurir' | keyvalue" class="ion-no-padding">
+    <ion-item-divider color="tertiary" sticky>
       <ion-icon slot="start" name="cube"></ion-icon>
-      <ion-label><span class="eksp"><strong>{{ items.key }}</strong> - {{ items.value.length }} Paket {{items.toggle}}</span></ion-label>
+      <ion-label><span class="eksp"><strong>{{ items.key }}</strong> - {{ items.value.length }} Paket</span></ion-label>
       <ion-note slot="end" class="pc">Total: {{ (items.value | pluck: 'listBarang' | flatten).length }} pcs</ion-note>
     </ion-item-divider>
-    <div *ngFor="let item of items.value | orderBy:'penerima' ">
+    <div *ngFor="let item of items.value | orderBy:'penerima.nama' ">
       <ion-item (click)="item.switch=!item.switch">
         <ion-label>
           <ion-note>{{ item.id }} <strong>({{ item.cs }})</strong></ion-note>
           <ion-card-title>
-          {{ item.penerima }} 
+          {{ item.penerima.nama.toUpperCase() }} 
           </ion-card-title>
         </ion-label>
         <ion-note slot="end">
           <ion-label color="tertiary">{{ item.status }}</ion-label>
-          <ion-label>{{ item.listBarang.length }}pcs </ion-label>
+          <ion-label>{{ item.pesanan.length }}pcs </ion-label>
         </ion-note>
       </ion-item>
       <div *ngIf="item.switch">
-        <ion-item color="light" *ngFor="let barang of item.listBarang">
-          <ion-label>{{ barang.nama }}</ion-label>
+        <ion-item color="light" *ngFor="let brg of item.pesanan">
+          <ion-label>{{ brg.barcode }}</ion-label>
         </ion-item>
       </div>
     </div>
-  </ion-card>
+  </ion-list>
 </div>
 
 <!--
@@ -52,13 +61,17 @@
 </ion-content>
 
 <ion-footer>
+  <ion-button *ngIf="!(olahdataExist | async) && (closingData)?.length!==0" style="margin: 0;" strong="true" fill="solid" expand="full" (click)="rekap()" color="light">
+    <ion-icon color="tertiary" slot="start" name="analytics"></ion-icon>
+    <ion-label color="tertiary">REKAP KIRIMAN</ion-label>
+  </ion-button>
   <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-button (click)="scanManual()">
         <ion-icon color="light" slot="icon-only" name="barcode"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-button style="margin-right:10px" strong="true" fill="outline" expand="block" (click)="scanMassal()" color="light">
+    <ion-button style="margin-right:10px" strong="true" fill="solid" expand="block" (click)="scanMassal()" color="tertiary">
       <ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN KIRIM
     </ion-button>
   </ion-toolbar>

@@ -5,13 +5,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ScanPage } from './scan.page';
+import { PrintAmbilanPage } from './print-ambilan.page';
 import { NgPipesModule } from 'ngx-pipes';
 
 const routes: Routes = [
   {
     path: '',
-    component: ScanPage
+    component: PrintAmbilanPage
   }
 ];
 
@@ -23,6 +23,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     NgPipesModule
   ],
-  declarations: [ScanPage]
+  declarations: [PrintAmbilanPage]
 })
-export class ScanPageModule {}
+export class PrintAmbilanPageModule {}

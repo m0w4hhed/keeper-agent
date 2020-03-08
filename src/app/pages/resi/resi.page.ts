@@ -10,6 +10,8 @@ import { ScannerService } from 'src/app/services/scanner.service';
 import { ModalController } from '@ionic/angular';
 
 import { UpdateResiPage } from 'src/app/pages/resi/update-resi/update-resi.page';
+import { Invoice } from 'src/app/services/interfaces';
+import { ToolService } from 'src/app/services/tool.service';
 
 @Component({
   selector: 'app-resi',
@@ -27,7 +29,7 @@ export class ResiPage {
   salahOngkir = false;
   realOngkir;
 
-  now;
+  now; tanggal;
 
   closingData: Observable<any>;
 
@@ -37,19 +39,25 @@ export class ResiPage {
     private dataService: DataService,
     private popupService: PopupService,
     private modal: ModalController,
+    private tool: ToolService,
     ) {
-    // this.encodedData = 'https://www.FreakyJolly.com';
-  }
-
-  tampilkan() {
-    if (this.now) {
-      this.onLoad = true;
-      const tgl = moment(this.now).format('YYYYMMDD');
-      this.closingData = this.dataService.getDatas(tgl);
+      this.tanggal = this.dataService.getTime();
+      const {startTime, endTime} = this.tool.getRangeTime(this.tool.getTime());
+      this.closingData = this.dataService.getDatas<Invoice>(
+        'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+        false, {from: startTime, to: endTime}
+      );
       this.task = this.closingData.subscribe(() => this.onLoad = false);
-    } else {
-      this.popupService.showToast('Pilih Tanggal Dulu', 2000);
-    }
+  }
+  tampilkan() {
+    this.onLoad = true;
+    this.task.unsubscribe();
+    const {startTime, endTime} = this.tool.getRangeTime(moment(this.now).unix());
+    this.closingData = this.dataService.getDatas<Invoice>(
+      'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+      false, {from: startTime, to: endTime}
+    );
+    this.task = this.closingData.subscribe(() => this.onLoad = false);
   }
 
   async detailPaket(paket) {
@@ -62,38 +70,20 @@ export class ResiPage {
     return await modal.present();
   }
 
-  reset() {
-      this.popupService.showToast('Resi Diupdate!', 2000);
-      this.scannedData = '';
-      this.realOngkir = '';
-      this.salahOngkir = false;
+  hitung(berat: number, ongkir?: number) {
+    let hasil = Math.ceil(berat / 1000);
+    if (ongkir) { hasil = hasil * ongkir; }
+    return hasil;
   }
-
-  scan() {
-    this.barcodeScanner.scan(this.scanner.settings).then(barcodeData => {
-      this.scannedData = barcodeData.text;
-    })
-    .catch(err => {
-      console.log('Error', err);
-      this.popupService.showToast('Error: ' + err, 3000);
+  hitungOngkir(data: Invoice[], real?: boolean) {
+    let allOngkir = 0;
+    data.forEach(invoice => {
+      let ongkir = 0;
+      real ? ongkir = invoice.realOngkir : ongkir = this.hitung(invoice.berat, invoice.ekspedisi.ongkir);
+      allOngkir += ongkir;
     });
+    return allOngkir;
   }
-
-  /*
-  encodedText() {
-    this.barcodeScanner
-      .encode(this.barcodeScanner.Encode.TEXT_TYPE, this.encodedData)
-      .then(
-        encodedData => {
-          console.log(encodedData);
-          this.encodedData = encodedData;
-        },
-        err => {
-          console.log('Error occured : ' + err);
-        }
-      );
-  }
-  */
 
   onDestroy() {
     this.task.unsubscribe();

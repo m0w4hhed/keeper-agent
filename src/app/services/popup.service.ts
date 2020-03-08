@@ -29,4 +29,30 @@ export class PopupService {
     });
     await alert.present();
   }
+
+  async showAlertConfirm(header: string, message: string) {
+    const alert = await this.alertController.create({
+      mode: 'ios',
+      header,
+      message,
+      buttons: [
+        {
+            text: 'Yes',
+            handler: () => {
+                alert.dismiss(true);
+                return false;
+            }
+        }, {
+            text: 'No',
+            handler: () => {
+                alert.dismiss(false);
+                return false;
+            }
+        }
+      ]
+    });
+    await alert.present();
+    const iya = await alert.onDidDismiss();
+    return iya.data as boolean;
+  }
 }
