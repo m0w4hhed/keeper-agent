@@ -1,6 +1,11 @@
 <ion-header>
-  <ion-toolbar color="tertiary" mode="ios">
-    <ion-title *ngIf="userService.user | async as user">[{{user.access[0].toUpperCase()}}] {{user.nama.toUpperCase()}}</ion-title>
+  <ion-toolbar color="primary" mode="ios">
+    <ion-buttons slot="start">
+      <ion-button (click)="settings()">
+        <ion-icon name="settings" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Keeper</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">
         <ion-icon name="log-out" slot="icon-only"></ion-icon>
@@ -9,12 +14,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen class="vertical-center" *ngIf="(userService.user | async) as user">
+<ion-content fullscreen class="vertical-center" *ngIf="(userService.user$ | async) as user">
   <div>
       <ion-grid *ngIf="dataPrint">
-        <ion-row *ngIf="user.access.includes('gudang')">
+        <ion-row *ngIf="user.access.includes('packer')">
           <ion-col size="6">
-              <ion-card class="" routerLink="/scan">
+              <ion-card class="" routerLink="/barang-keluar">
                 <img src="../../assets/messenger.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Scan Barang Keluar</ion-card-subtitle>
@@ -26,13 +31,13 @@
               <ion-card class=""  routerLink="/resi">
                 <img src="../../assets/barcode-scanner.svg" />
                 <ion-card-header>
-                  <ion-card-subtitle>Cari & Masukkan Resi</ion-card-subtitle>
-                  <ion-card-title><strong>INPUT RESI</strong></ion-card-title>
+                  <ion-card-subtitle>Pembayaran Keep</ion-card-subtitle>
+                  <ion-card-title><strong>ADMIN</strong></ion-card-title>
                 </ion-card-header>
               </ion-card>
           </ion-col>
         </ion-row>
-        <ion-row *ngIf="user.access.includes('ambilan')">
+        <ion-row *ngIf="user.access.includes('keeper')">
           <ion-col>
               <ion-card class="" routerLink="/barang-masuk">
                 <img src="../../assets/cart.svg" />
@@ -44,7 +49,7 @@
           </ion-col>
           <ion-col>
               <ion-card [class]="dataPrint?.length>0?'danger':''" routerLink="/list-ambilan">
-                <ion-badge [color]="dataPrint?.length>0?'danger':'tertiary'" *ngIf="dataPrint">{{dataPrint?.length}}</ion-badge>
+                <ion-badge [color]="dataPrint?.length>0?'danger':'primary'" *ngIf="dataPrint">{{dataPrint?.length}}</ion-badge>
                 <img src="../../assets/package.svg" />
                 <ion-card-header>
                   <ion-card-subtitle>Daftar List Ambilan</ion-card-subtitle>
@@ -58,7 +63,7 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar text-center color="tertiary" mode="ios">
-    <ion-text>NabiilahGudang v{{appVersion}}</ion-text>
+  <ion-toolbar class="ion-text-center" color="primary" mode="ios">
+    <ion-text>Keeper Agent v{{appVersion}}</ion-text>
   </ion-toolbar>
 </ion-footer>

@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { map, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest, of, forkJoin } from 'rxjs';
 import { PopupService } from './popup.service';
 import * as firebase from 'firebase';
-import { Invoice, Pesanan } from './interfaces';
+import { Invoice, Pesanan, UserConfig, DataToko } from './interfaces';
 import { WhereFilterOp } from '@firebase/firestore-types';
 
 /**
@@ -41,9 +41,71 @@ export interface OlahData {
 export class DataService {
 
   constructor(
-    public db: AngularFirestore,
+    public afs: AngularFirestore,
     private popup: PopupService,
     ) {
+  }
+
+  getDataToko(
+    filter: Filter[],
+    options?: {
+      searchMode?: {field: string, searchText: string}|null,
+      rangeDate?: {from: number, to: number, orderBy: string}|null,
+      limit?: number|null
+    }|null
+  ): Observable<DataToko[]> {
+    return this.afs.collection('configs').doc('user_config').collection<DataToko>('data_toko', ref => {
+      let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+      if (options) {
+        if (options.searchMode) {
+          console.log(`[FTR] Search value ${options.searchMode.searchText}`);
+          const start = options.searchMode.searchText.toString().toLowerCase();
+          const end = start + '\uf8ff';
+          query = query.limit(10).orderBy(options.searchMode.field).startAt(start).endAt(end);
+        } else {
+          if (options.rangeDate) {
+            query = query.orderBy(options.rangeDate.orderBy).startAt(options.rangeDate.from).endAt(options.rangeDate.to);
+          }
+        }
+        if (options.limit) {
+          query = query.limit(options.limit);
+        }
+      }
+      filter.forEach(f => {
+        query = query.where(f.field, f.comp, f.value);
+      });
+      return query;
+    }).valueChanges();
+  }
+  async createDataToko(toko: DataToko) {
+    try {
+      const config = this.afs.collection('configs').doc('user_config');
+      const docRef = config.collection('data_toko').doc(toko.kode).ref;
+      const batch = this.afs.firestore.batch();
+      const doc = await docRef.get();
+      if (!doc.exists) {
+        toko.nama = toko.nama.toLowerCase();
+        toko.blok = toko.blok.toUpperCase();
+        batch.set(docRef, toko);
+        batch.update(config.ref, { data_toko: firebase.firestore.FieldValue.arrayUnion(toko.kode) });
+        return batch.commit().then(() => { return true; });
+      } else {
+        return Promise.resolve(false);
+      }
+    } catch (err) { throw err; }
+  }
+  updateDataToko(toko: DataToko, deleteData?: boolean|null) {
+    const dataTokoRef = this.afs.collection('configs').doc('user_config').collection('data_toko');
+    if (deleteData) {
+      const batch = this.afs.firestore.batch();
+      const tokoRef = dataTokoRef.doc(toko.kode).ref;
+      const userConfigRef = this.afs.collection('configs').doc('user_config').ref;
+      batch.delete(tokoRef);
+      batch.update(userConfigRef, {data_toko: firebase.firestore.FieldValue.arrayRemove(toko.kode)});
+      return batch.commit();
+    } else {
+      return dataTokoRef.doc(toko.kode).update(toko);
+    }
   }
 
   getTime(format?: string) {
@@ -55,7 +117,7 @@ export class DataService {
   }
 
   olahdataExist(tanggal: string, olahType: string) {
-    return this.db.collection('olahdata').doc('barang').collection('per-hari').doc<OlahData>(tanggal).valueChanges().pipe(
+    return this.afs.collection('olahdata').doc('barang').collection('per-hari').doc<OlahData>(tanggal).valueChanges().pipe(
       switchMap(olahdata => {
         if (olahdata) {
           if (olahType === 'keluar') { return of(olahdata['barang-keluar'] !== 0); }
@@ -66,7 +128,7 @@ export class DataService {
   }
   async olahData(data: Pesanan[]|Invoice[], olahType: string, tanggal: string) {
     try {
-      const olahdataBarangRef = this.db.collection('olahdata').doc('barang').collection('per-hari').doc<OlahData>(tanggal).ref;
+      const olahdataBarangRef = this.afs.collection('olahdata').doc('barang').collection('per-hari').doc<OlahData>(tanggal).ref;
       const olahdataDoc = await olahdataBarangRef.get();
       let olahdata = {
         tanggal: +(tanggal),
@@ -117,7 +179,7 @@ export class DataService {
   }
   async updateInvoice(id: string, data: any) {
     try {
-      const invoiceRef = this.db.collection('keep').doc(id).ref;
+      const invoiceRef = this.afs.collection('keep').doc(id).ref;
       const invoiceDoc = await invoiceRef.get();
       if (invoiceDoc.exists) {
         if (invoiceDoc.data().status !== 'dikirim') {
@@ -134,50 +196,40 @@ export class DataService {
   }
   async updateResi(id: string, data: any) {
     try {
-      return await this.db.collection('keep').doc(id).update(data);
+      return await this.afs.collection('keep').doc(id).update(data);
     } catch (err) {
       throw err;
     }
   }
 
-  getDatas<T>(dbName: string, filter: Filter[], searchMode?: boolean|null, rangeDate?: {from: number, to: number}|null): Observable<T[]> {
-    return this.db.collection(dbName, ref => {
+  getDatas<T>(dbName: string, filter: Filter[], searchMode?: {field: string, searchText: string}|null, rangeDate?: {from: number, to: number, orderBy: string}|null): Observable<T[]> {
+    return this.afs.collection<T>(dbName, ref => {
       let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
       if (searchMode) {
-        console.log(`[FTR] Search value ${filter[0].value}`);
-        const start = filter[0].value.toString().toLowerCase();
+        console.log(`[FTR] Search value ${searchMode.searchText}`);
+        const start = searchMode.searchText.toString().toLowerCase();
         const end = start + '\uf8ff';
-        query = query.limit(10).orderBy(filter[0].field).startAt(start).endAt(end);
+        query = query.limit(10).orderBy(searchMode.field).startAt(start).endAt(end);
       } else {
         if (rangeDate) {
-          if (dbName === 'ambilan') { query = query.orderBy('waktuPrint').startAt(rangeDate.from).endAt(rangeDate.to); }
-          if (dbName === 'keep') { query = query.orderBy('waktuDikirim').startAt(rangeDate.from).endAt(rangeDate.to); }
+          query = query.orderBy(rangeDate.orderBy).startAt(rangeDate.from).endAt(rangeDate.to);
         }
         filter.forEach(f => {
           query = query.where(f.field, f.comp, f.value);
         });
       }
       return query;
-    }).snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data() as T;
-          const barcode = a.payload.doc.id;
-          const id = a.payload.doc.id;
-          return (dbName === 'ambilan') ? { barcode, ...data } : { id, ...data };
-        });
-      })
-    );
+    }).valueChanges();
   }
   updateAllAmbilan(ambilan: Pesanan[], data: any) {
-    const batch = this.db.firestore.batch();
+    const batch = this.afs.firestore.batch();
     // if (ambilan.length >= 500) {
     //   const splitAmbilan = this.splitArray(ambilan, 500);
     //   const commits = [];
     //   splitAmbilan.forEach((amb) => {
-    //     const batchs = this.db.firestore.batch();
+    //     const batchs = this.afs.firestore.batch();
     //     amb.forEach(barang => {
-    //       const docRef = this.db.doc(`ambilan/${barang.barcode}`).ref;
+    //       const docRef = this.afs.doc(`ambilan/${barang.barcode}`).ref;
     //       batchs.update(docRef, data);
     //     });
     //     commits.push(batch.commit());
@@ -185,7 +237,7 @@ export class DataService {
     //   return Promise.all(commits);
     // } else {
     ambilan.forEach(barang => {
-      const docRef = this.db.doc(`ambilan/${barang.barcode}`).ref;
+      const docRef = this.afs.doc(`ambilan/${barang.barcode}`).ref;
       batch.update(docRef, data);
     });
     return batch.commit();
@@ -193,7 +245,7 @@ export class DataService {
   }
   async updateAmbilan(id: string, data: any) {
     try {
-      return this.db.collection('ambilan').doc(id).update(data);
+      return this.afs.collection('ambilan').doc(id).update(data);
     } catch (err) { throw err; }
   }
   // splitArray(data: any[], length: number) {

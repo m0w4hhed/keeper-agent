@@ -1,13 +1,13 @@
 <ion-header>
 </ion-header>
 
-<ion-content color="tertiary" >
+<ion-content color="primary" >
   <ion-card color="light" mode="ios" class="container">
     <ion-card-header>
       <ion-card-title style="text-align: center">
-        <ion-label color="tertiary">
+        <ion-label color="primary">
           <strong>MASUK</strong>
-          <p>Nabiilah Gudang</p>
+          <p>Keeper Agent</p>
         </ion-label>
       </ion-card-title>
     </ion-card-header>
@@ -15,21 +15,21 @@
     <ion-card-content>
       <ion-list style="padding: 0;">
         <ion-item  color="light">
-          <ion-label color="tertiary" position="floating">Email</ion-label>
+          <ion-label color="primary" position="floating">Username</ion-label>
           <ion-input type="email" [(ngModel)]="email"></ion-input>
         </ion-item>
         <ion-item  color="light">
-          <ion-label color="tertiary" position="floating">Password</ion-label>
+          <ion-label color="primary" position="floating">Password</ion-label>
           <ion-input [type]="showpass? 'text':'password'" [(ngModel)]="pass"></ion-input>
           <ion-buttons slot="end">
             <ion-button (click)="showpass = !showpass" >
-              <ion-icon slot="icon-only" name="eye" [color]="showpass? 'danger':'tertiary'"></ion-icon>
+              <ion-icon slot="icon-only" name="eye" [color]="showpass? 'danger':'primary'"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-item>
       </ion-list>
       <br>
-      <ion-button color="tertiary" [disabled]="onlogin" (click)="login()" expand="block" style="margin:0; height: 40px;">
+      <ion-button color="primary" [disabled]="onlogin" (click)="login()" expand="block" style="margin:0; height: 40px;">
         <ion-icon name="log-in"></ion-icon>&nbsp;
         <ion-label>MASUK</ion-label>
       </ion-button>

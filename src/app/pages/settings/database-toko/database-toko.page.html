@@ -1,0 +1,144 @@
+<ion-header>
+  <ion-toolbar color="primary" mode="ios">
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-searchbar mode="ios" showCancelButton="focus" cancelButtonText="Batal"
+    (keyup.enter)="cari($event.target.value)" style="padding:0;"
+    ></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list class="ion-no-padding">
+    <ion-item-divider *ngIf="requestToko" color="primary" sticky>REQUEST TOKO</ion-item-divider>
+    <ion-item button (click)="addToko=!addToko" class="ion-text-center">
+      <ion-label>
+        <ion-icon name="add"></ion-icon>
+        TAMBAH TOKO
+      </ion-label>
+    </ion-item>
+    <ion-list class="ion-no-padding" [formGroup]="addForm" *ngIf="addToko">
+      <ion-item>
+        <ion-label>KODE: </ion-label>
+        <ion-input placeholder="huruf & angka (tanpa spasi)" formControlName="kode"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="8">
+              <ion-label position="floating">NAMA: </ion-label>
+              <ion-input formControlName="nama"></ion-input>
+            </ion-col>
+            <ion-col size="4">
+              <ion-label position="floating">LANTAI: </ion-label>
+              <ion-input formControlName="lantai" type="number"></ion-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+      <ion-item>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="8">
+              <ion-label position="floating">BLOK: </ion-label>
+              <ion-input formControlName="blok"></ion-input>
+            </ion-col>
+            <ion-col size="4">
+              <ion-label position="floating">NO: </ion-label>
+              <ion-input formControlName="no"></ion-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+      <ion-item>
+        <ion-label>HP DAFTAR: </ion-label>
+        <ion-input placeholder="6281..." formControlName="hpDaftar" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>HP KEEP: </ion-label>
+        <ion-input placeholder="6281..." formControlName="hpKeep" type="number"></ion-input>
+      </ion-item>
+      <ion-button [disabled]="addForm.invalid" expand="block" color="primary" (click)="create(addForm.value)">
+        <ion-label>
+          <ion-icon name="add"></ion-icon>
+          &nbsp;TAMBAH TOKO
+        </ion-label>
+      </ion-button>
+    </ion-list>
+    <ion-item button *ngFor="let toko of requestToko | orderBy:'nama'">
+      <ion-label>
+        {{toko.nama.toUpperCase()}}
+        <p>[{{toko.kode}}] - LT.{{toko.lantai}}, Blok.{{toko.blok}}</p>
+      </ion-label>
+      <ion-chip slot="end" color="danger">
+        <span>PENDING</span>
+      </ion-chip>
+    </ion-item>
+    <ion-item-divider color="primary" sticky>TOKO</ion-item-divider>
+    <div style="padding: 0;" *ngFor="let toko of data_toko">
+      <ion-item button (click)="toko.expand=!toko.expand">
+        <ion-label>
+          {{toko.nama.toUpperCase()}}
+          <p>kode: {{toko.kode}}</p>
+        </ion-label>
+        <ion-chip slot="end" [color]="toko.active?'danger':''">
+          <span *ngIf="toko.active">active:true</span>
+          <span *ngIf="!toko.active">active:false</span>
+        </ion-chip>
+      </ion-item>
+      <ion-list class="ion-no-padding" *ngIf="toko.expand">
+        <ion-item>
+          <ion-label position="floating">kode: </ion-label>
+          <ion-input disabled [(ngModel)]="toko.kode" (input)="toko.kode=$event.target.value.toLowerCase()"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col size="8">
+                <ion-label>nama: </ion-label>
+                <ion-input [(ngModel)]="toko.nama" (input)="toko.nama=$event.target.value.toLowerCase()"></ion-input>
+              </ion-col>
+              <ion-col size="4">
+                <ion-label position="floating">lantai: </ion-label>
+                <ion-input [(ngModel)]="toko.lantai" type="number" placeholder="Lantai"></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item>
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col size="8">
+                <ion-label position="floating">blok: </ion-label>
+                <ion-input [(ngModel)]="toko.blok" (input)="toko.blok=$event.target.value.toUpperCase()"></ion-input>
+              </ion-col>
+              <ion-col size="4">
+                <ion-label position="floating">no: </ion-label>
+                <ion-input [(ngModel)]="toko.no" type="number"></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item>
+          <ion-label>hpDaftar: </ion-label>
+          <ion-input [(ngModel)]="toko.hpDaftar" type="number"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>hpKeep: </ion-label>
+          <ion-input [(ngModel)]="toko.hpKeep" type="number"></ion-input>
+        </ion-item>
+        <ion-button expand="block" color="primary" (click)="update(toko)">
+          <ion-icon name="sync"></ion-icon>
+          &nbsp;UPDATE
+        </ion-button>
+        <ion-button expand="block" color="danger" (click)="delete(toko)">
+          <ion-icon name="trash"></ion-icon>
+          &nbsp;HAPUS
+        </ion-button>
+      </ion-list>
+    </div>
+  </ion-list>
+</ion-content>

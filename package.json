@@ -7,7 +7,7 @@
     "ng": "ng",
     "start": "ionic serve --devapp",
     "device": "ionic cordova run android --device",
-    "build": "ionic cordova resources android && ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\keeper-agent.apk && jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ..\\mi-apps.keystore ..\\keeper-agent.apk mi-apps && zipalign -v 4 ..\\keeper-agent.apk ..\\keeper-agent-aligned.apk",
+    "build": "ionic cordova resources android && ionic cordova build android --prod --release && copy /Y platforms\\android\\app\\build\\outputs\\apk\\release\\app-release-unsigned.apk ..\\keeper-agent.apk && jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ..\\mi-apps.keystore ..\\keeper-agent.apk mi-apps && zipalign -v 4 ..\\keeper-agent.apk ..\\KeeperAgent.v.apk",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -29,6 +29,7 @@
     "@ionic-native/app-version": "^5.21.6",
     "@ionic-native/barcode-scanner": "^5.21.6",
     "@ionic-native/core": "^5.21.6",
+    "@ionic-native/fcm": "^5.22.0",
     "@ionic-native/file": "^5.21.6",
     "@ionic-native/file-opener": "^5.21.6",
     "@ionic-native/printer": "^5.21.6",
@@ -36,9 +37,12 @@
     "@ionic-native/status-bar": "^5.21.6",
     "@ionic/angular": "^4.11.10",
     "angular-pipes": "^10.0.0",
-    "cordova-android": "^8.1.0",
+    "cordova-android": "^8.0.0",
     "cordova-plugin-android-permissions": "^1.0.2",
+    "cordova-plugin-androidx": "^1.0.2",
+    "cordova-plugin-androidx-adapter": "^1.1.0",
     "cordova-plugin-app-version": "^0.1.9",
+    "cordova-plugin-fcm-with-dependecy-updated": "^4.4.0",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-file-opener2": "^3.0.0",
     "cordova-plugin-printer": "^0.8.0",
@@ -103,7 +107,16 @@
       "cordova-plugin-printer": {
         "ANDROID_SUPPORT_V4_VERSION": "28.+"
       },
-      "cordova-plugin-app-version": {}
+      "cordova-plugin-app-version": {},
+      "cordova-plugin-fcm-with-dependecy-updated": {
+        "FCM_VERSION": "19.0.0",
+        "GRADLE_TOOLS_VERSION": "3.5.3",
+        "GOOGLE_SERVICES_VERSION": "4.3.3",
+        "SUPPORT_LIBRARY_VERSION": "28.0.0",
+        "ANDROID_DEFAULT_NOTIFICATION_ICON": "@mipmap/ic_launcher"
+      },
+      "cordova-plugin-androidx": {},
+      "cordova-plugin-androidx-adapter": {}
     },
     "platforms": [
       "android"

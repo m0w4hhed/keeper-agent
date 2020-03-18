@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="tertiary" mode="ios">
+  <ion-toolbar color="primary" mode="ios">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
@@ -7,14 +7,14 @@
       <strong>NABIILAH</strong>STORE
     </ion-title>
   </ion-toolbar>
-  <ion-progress-bar color="tertiary" *ngIf="onLoad" type="indeterminate"></ion-progress-bar>
+  <ion-progress-bar color="primary" *ngIf="onLoad" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
 <ion-content class="ion-no-padding">
 
 <div *ngIf="closingData | async; let closingan">
   <ion-list class="ion-no-padding" *ngFor="let items of closingan | groupBy: 'ekspedisi.kurir' | keyvalue">
-    <ion-item-divider sticky color="tertiary">
+    <ion-item-divider sticky color="primary">
       <ion-icon slot="start" name="cube"></ion-icon>
       <ion-label><span class="eksp"><strong>{{ items.key }}</strong></span> <span class="note">Total: {{ hitungOngkir(items.value) | number }} <br> Real:  {{ hitungOngkir(items.value, true) | number }}</span></ion-label>
       <ion-label slot="end"><span class="paket">{{ items.value.length }} Paket <br> {{ (items.value | pluck: 'pesanan' | flatten).length }} pcs</span></ion-label>
@@ -32,12 +32,12 @@
           </ion-note>
         </ion-label>
         <ion-note slot="end">
-          <ion-label color="tertiary">{{ item.status }}</ion-label>
+          <ion-label color="primary">{{ item.status }}</ion-label>
           <ion-label>{{ item.pesanan.length }}pcs </ion-label>
         </ion-note>
       </ion-item>
       <ion-item-options side="end">
-        <ion-item-option color="tertiary" (click)="detailPaket(item)">EDIT</ion-item-option>
+        <ion-item-option color="primary" (click)="detailPaket(item)">EDIT</ion-item-option>
       </ion-item-options>
       <!--
       <div *ngIf="item.switch">
@@ -50,9 +50,9 @@
           <ion-input [(ngModel)]="realOngkir" type="number"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-button expand="block" color="tertiary" (click)="scan()"><ion-icon slot="icon-only" name="barcode"></ion-icon> SCAN BARCODE</ion-button>
-          <ion-button expand="block" [color]="salahOngkir?'tertiary':'light'" (click)="salahOngkir=!salahOngkir">Salah Ongkir?</ion-button>
-          <ion-button expand="block" color="tertiary" (click)="updateResi(item)" slot="end">INPUT</ion-button>
+          <ion-button expand="block" color="primary" (click)="scan()"><ion-icon slot="icon-only" name="barcode"></ion-icon> SCAN BARCODE</ion-button>
+          <ion-button expand="block" [color]="salahOngkir?'primary':'light'" (click)="salahOngkir=!salahOngkir">Salah Ongkir?</ion-button>
+          <ion-button expand="block" color="primary" (click)="updateResi(item)" slot="end">INPUT</ion-button>
         </ion-item>
       </div>
       -->
@@ -71,9 +71,9 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar color="tertiary">
+  <ion-toolbar color="primary">
       <ion-card>
-          <ion-item-divider color="tertiary">
+          <ion-item-divider color="primary">
             <ion-datetime class="eksp" [(ngModel)]="now"  display-format="DD MMMM YYYY"
               placeholder="{{tanggal * 1000 | date:'dd MMMM yyyy'}}" (ionChange)="tampilkan()" style="margin: 0 auto"
             ></ion-datetime>

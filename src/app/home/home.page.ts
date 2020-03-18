@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { DataService } from '../services/data.service';
@@ -17,6 +18,7 @@ export class HomePage {
 
   constructor(
     public userService: UserService,
+    private router: Router,
     private dataService: DataService,
     private tool: ToolService,
     private popup: PopupService,
@@ -28,6 +30,10 @@ export class HomePage {
     .subscribe(res => {
       this.dataPrint = res;
     });
+  }
+
+  settings() {
+    this.router.navigate(['/settings']);
   }
 
   logout() {

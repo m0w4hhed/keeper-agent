@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="tertiary" mode="ios">
+  <ion-toolbar color="primary" mode="ios">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
@@ -15,7 +15,7 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
+  <ion-progress-bar color="primary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
 <ion-content class="ion-no-padding">
@@ -29,7 +29,7 @@
             {{ tool.titleCase(data.barang) }} {{ tool.titleCase(data.warna) }}
             </ion-card-title>
           </ion-label>
-          <ion-toggle [disabled]="onPrint" [value]="data" color="tertiary" mode="ios" [checked]="isSelected(data)" (ionChange)="$event ? selectPrint($event, data) : null"></ion-toggle>
+          <ion-toggle [disabled]="onPrint" [value]="data" color="primary" mode="ios" [checked]="isSelected(data)" (ionChange)="$event ? selectPrint($event, data) : null"></ion-toggle>
         </ion-item>
       </ion-item-sliding>
   </ion-list>
@@ -46,7 +46,7 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar color="tertiary" *ngIf="dataPrint">
+  <ion-toolbar color="primary" *ngIf="dataPrint">
     <ion-chip color="light" slot="start" style="margin-left: 15px;">
       <ion-icon name="wallet" color="light"></ion-icon>
       <ion-label>Rp. {{ dataPrint | pluck:'hargaBeli' | sum | number }}</ion-label>

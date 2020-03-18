@@ -1,3 +1,5 @@
+import { DatabaseTokoPageModule } from './pages/settings/database-toko/database-toko.module';
+import { SettingsPageModule } from './pages/settings/settings.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -19,6 +21,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Printer } from '@ionic-native/printer/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { FCM } from '@ionic-native/fcm/ngx';
 
 import { UpdateResiPageModule } from 'src/app/pages/resi/update-resi/update-resi.module';
 import { BarangMasukPageModule } from 'src/app/pages/barang-masuk/barang-masuk.module';
@@ -42,6 +45,8 @@ import { PrintAmbilanPageModule } from './pages/list-ambilan/print-ambilan/print
     UpdateResiPageModule,
     BarangMasukPageModule,
     PrintAmbilanPageModule,
+    SettingsPageModule,
+    DatabaseTokoPageModule,
   ],
   providers: [
     StatusBar,
@@ -51,6 +56,7 @@ import { PrintAmbilanPageModule } from './pages/list-ambilan/print-ambilan/print
     Printer,
     AndroidPermissions,
     AppVersion,
+    FCM,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     BarcodeScanner
   ],

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="tertiary" mode="ios">
+  <ion-toolbar color="primary" mode="ios">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
@@ -19,7 +19,7 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar color="tertiary" *ngIf="dataAmbilan">
+  <ion-toolbar color="primary" *ngIf="dataAmbilan">
     <ion-chip style="margin-left: 10px;" slot="start">
       <ion-icon name="wallet" color="light"></ion-icon>
       <ion-label color="light">EST: Rp.{{ dataAmbilan | pluck:'hargaBeli' | sum | number }}</ion-label>
@@ -28,14 +28,14 @@
       <ion-label color="light">Rp.{{ hitungDiambil(dataAmbilan).total | number }}</ion-label>
     </ion-chip>
   </ion-toolbar>
-  <ion-progress-bar color="tertiary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
+  <ion-progress-bar color="primary" *ngIf="onload" type="indeterminate"></ion-progress-bar>
 </ion-header>
  
 <ion-content class="ion-no-padding">
 
   <div *ngIf="dataAmbilan?.length>0">
     <ion-list class="ion-no-padding" *ngFor="let ambilan of dataAmbilan | groupBy:'toko' | keyvalue | orderBy:'key'; trackBy: addExpand">
-      <ion-item-divider style="height: 50px;" color="tertiary" (click)="ambilan.expand=!ambilan.expand" sticky>
+      <ion-item-divider style="height: 50px;" color="primary" (click)="ambilan.expand=!ambilan.expand" sticky>
         <ion-icon slot="start" name="cube"></ion-icon>
         <ion-label><span class="eksp"><strong>{{ ambilan.key.toUpperCase() }}</strong> - {{ hitungDiambil(ambilan.value).jumlah }}/{{ ambilan.value.length }}pcs</span></ion-label>
         <ion-note slot="end" class="pc">Rp.{{ hitungDiambil(ambilan.value).total | number }}</ion-note>
@@ -73,11 +73,11 @@
 
 <ion-footer>
   <ion-button *ngIf="!(olahdataExist | async) && (dataAmbilan)?.length!==0" style="margin: 0;" strong="true" fill="solid" expand="full" (click)="rekap()" color="light">
-    <ion-icon color="tertiary" slot="start" name="analytics"></ion-icon>
-    <ion-label color="tertiary">REKAP AMBILAN</ion-label>
+    <ion-icon color="primary" slot="start" name="analytics"></ion-icon>
+    <ion-label color="primary">REKAP AMBILAN</ion-label>
   </ion-button>
-  <ion-toolbar color="tertiary">
-    <ion-button style="margin-right:10px" strong="true" fill="solid" expand="block" (click)="scanMassal()" color="tertiary">
+  <ion-toolbar color="primary">
+    <ion-button style="margin-right:10px" strong="true" fill="solid" expand="block" (click)="scanMassal()" color="primary">
       <ion-icon slot="start" name="qr-scanner"></ion-icon> SCAN BARANG MASUK
     </ion-button>
   </ion-toolbar>

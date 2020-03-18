@@ -4,14 +4,16 @@ import * as firebase from 'firebase';
 import { PopupService } from './popup.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { UserConfig } from './interfaces';
 
 export interface User {
   access: string[];
-  kode: string;
-  nama: string;
-  status: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
+  uid: string;
 }
 
 @Injectable({
@@ -19,25 +21,27 @@ export interface User {
 })
 export class UserService {
 
-  user: Observable<User>;
+  user$: Observable<User>;
+  config$: BehaviorSubject<UserConfig>; task;
+
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
     private zone: NgZone,
     private popup: PopupService,
     private afs: AngularFirestore
-    ) {
-      this.user = this.afAuth.authState.pipe(
-        switchMap(user => {
-          if (user) {
-            return this.afs.collection('admin').doc<User>(user.uid).valueChanges();
-          } else {
-            return of(null);
-          }
-        })
-      );
-    }
-
+  ) {
+    this.config$ = new BehaviorSubject({} as UserConfig);
+    this.user$ = this.afAuth.authState.pipe(
+      switchMap(user => {
+        if (user) {
+          return this.afs.collection('admins').doc<User>(user.uid).valueChanges();
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
   async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     return new Promise((resolve, reject) => {
       firebase.auth().onAuthStateChanged(user => {
@@ -51,7 +55,6 @@ export class UserService {
       });
     });
   }
-
   saveRouteTo(page: string) {
     this.zone.run(async () => {
       this.router.navigate([page]);
@@ -60,25 +63,33 @@ export class UserService {
 
   logout() {
     console.log('[USR] Log-out');
-    this.user = of(null);
+    this.user$ = of(null);
     return this.afAuth.auth.signOut();
   }
-
   async loginWithEmail(username: string, password: string) {
     try {
       console.log('login as ', username, ' & ', password);
-      return await firebase.auth().signInWithEmailAndPassword(username + '@nabiilah.com', password);
-      // if (userdata) {
-      //   console.log('login');
-      //   this.popup.showToast('Berhasil masuk sebagai ' + userdata.user.email, 700);
-      // }
+      return await firebase.auth().signInWithEmailAndPassword(username + '@keeper.com', password);
     } catch (error) {
       throw error;
-      this.popup.showAlert('Error!', error);
     }
   }
 
   getUserData() {
-    return this.user;
+    return this.user$;
+  }
+  getConfig() {
+    console.log('[USR] Get Config');
+    this.task = this.afs.collection('configs').doc<UserConfig>('user_config').valueChanges().subscribe(res => {
+      console.log('[USR] Config Subscribed');
+      this.config$.next(res);
+    });
+  }
+  updateConfig(field: string, value: string) {
+    return this.afs.collection('configs').doc('user_config').update({ [field]: value });
+  }
+
+  onDestroy() {
+    this.task.unsubscribe();
   }
 }

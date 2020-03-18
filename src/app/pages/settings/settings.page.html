@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar color="primary" mode="ios">
+    <ion-back-button slot="start"></ion-back-button>
+    <ion-title>SETTINGS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list class="ion-no-padding">
+    <ion-item-divider>Toko</ion-item-divider>
+    <ion-item button (click)="openDatabase()" color="light">
+      <ion-icon name="cart" slot="start"></ion-icon>
+      <ion-label>Database Toko</ion-label>
+      <ion-badge color="warning" *ngIf="!loadToko && requestToko?.length!==0">{{requestToko?.length}}</ion-badge>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+    </ion-item>
+    <ion-item-divider>Kontak</ion-item-divider>
+    <ion-item button (click)="editConfig('wa_admin')" color="light">
+      <ion-label>
+        Kontak Admin
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.wa_admin}}</ion-note>
+    </ion-item>
+    <ion-item button (click)="editConfig('wa_cs')" color="light">
+      <ion-label>
+        Kontak CS
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.wa_cs}}</ion-note>
+    </ion-item>
+    <ion-item button (click)="editConfig('wa_keeper')" color="light">
+      <ion-label>
+        Kontak Keeper
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.wa_keeper}}</ion-note>
+    </ion-item>
+    <ion-item-divider>User Config</ion-item-divider>
+    <ion-item button (click)="editConfig('tele_reg')" color="light">
+      <ion-label>
+        ID Tele Registrasi
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.tele_reg}}</ion-note>
+    </ion-item>
+    <ion-item button (click)="editConfig('cors_proxy')" color="light">
+      <ion-label>
+        CORS Proxy
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.cors_proxy}}</ion-note>
+    </ion-item>
+    <ion-item button (click)="editConfig('graphqlAPI')" color="light">
+      <ion-label>
+        GraphQL API Server
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.graphqlAPI}}</ion-note>
+    </ion-item>
+    <ion-item button (click)="editConfig('key')" color="light">
+      <ion-label>
+        RajaOngkir Key API
+      </ion-label>
+      <ion-spinner *ngIf="loadToko" slot="end" name="dots" color="primary"></ion-spinner>
+      <ion-note>{{USER_CONFIG.key}}</ion-note>
+    </ion-item>
+  </ion-list>
+</ion-content>

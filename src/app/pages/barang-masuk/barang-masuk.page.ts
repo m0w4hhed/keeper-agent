@@ -35,15 +35,15 @@ export class BarangMasukPage {
     this.tanggal = this.dataService.getTime('DD');
     const {startTime, endTime} = this.tool.getRangeTime(this.tool.getTime());
     // console.log(startTime, endTime);
-    this.task = this.dataService.getDatas<Pesanan>(
-      'ambilan',
-      [{field: 'printed', comp: '==', value: true}],
-      false, {from: startTime, to: endTime}
-    ).subscribe(res => {
-      this.onload = false;
-      this.dataAmbilan = res;
-      // console.log(res);
-    });
+    // this.task = this.dataService.getDatas<Pesanan>(
+    //   'ambilan',
+    //   [{field: 'printed', comp: '==', value: true}],
+    //   false, {from: startTime, to: endTime}
+    // ).subscribe(res => {
+    //   this.onload = false;
+    //   this.dataAmbilan = res;
+    //   // console.log(res);
+    // });
     this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'masuk');
   }
 
@@ -54,14 +54,14 @@ export class BarangMasukPage {
       const {startTime, endTime} = this.tool.getRangeTime(moment(this.now).unix());
       // console.log(startTime, endTime);
       this.tanggal = moment(this.now).format('DD');
-      this.task = this.dataService.getDatas<Pesanan>(
-        'ambilan',
-        [{field: 'printed', comp: '==', value: true}],
-        false, {from: startTime, to: endTime}
-      ).subscribe(res => {
-        this.onload = false;
-        this.dataAmbilan = res;
-      });
+      // this.task = this.dataService.getDatas<Pesanan>(
+      //   'ambilan',
+      //   [{field: 'printed', comp: '==', value: true}],
+      //   false, {from: startTime, to: endTime}
+      // ).subscribe(res => {
+      //   this.onload = false;
+      //   this.dataAmbilan = res;
+      // });
       this.olahdataExist = this.dataService.olahdataExist(moment(this.now).format('YYYYMMDD'), 'masuk');
     } else {
       this.popup.showToast('Pilih Tanggal Dulu', 1000);

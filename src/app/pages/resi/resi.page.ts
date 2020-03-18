@@ -43,20 +43,20 @@ export class ResiPage {
     ) {
       this.tanggal = this.dataService.getTime();
       const {startTime, endTime} = this.tool.getRangeTime(this.tool.getTime());
-      this.closingData = this.dataService.getDatas<Invoice>(
-        'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
-        false, {from: startTime, to: endTime}
-      );
+      // this.closingData = this.dataService.getDatas<Invoice>(
+      //   'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+      //   false, {from: startTime, to: endTime}
+      // );
       this.task = this.closingData.subscribe(() => this.onLoad = false);
   }
   tampilkan() {
     this.onLoad = true;
     this.task.unsubscribe();
     const {startTime, endTime} = this.tool.getRangeTime(moment(this.now).unix());
-    this.closingData = this.dataService.getDatas<Invoice>(
-      'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
-      false, {from: startTime, to: endTime}
-    );
+    // this.closingData = this.dataService.getDatas<Invoice>(
+    //   'keep', [{field: 'status', comp: '==', value: 'dikirim'}],
+    //   false, {from: startTime, to: endTime}
+    // );
     this.task = this.closingData.subscribe(() => this.onLoad = false);
   }
 
